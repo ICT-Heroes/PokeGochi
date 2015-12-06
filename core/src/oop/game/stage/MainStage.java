@@ -1,6 +1,7 @@
 package oop.game.stage;
 
 import oop.game.assets.Assets;
+import oop.game.assets.GameInfo;
 import oop.game.controller.PokemonRequestController;
 
 import com.badlogic.gdx.Gdx;
@@ -8,7 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -19,34 +20,38 @@ public class MainStage extends Stage {
 	private Table fieldTable, buttonTable;
 	private TextButton[] textButton;
 	private PokemonRequestController pokemonRequestController;
-	private volatile Texture texture;
-	private Image image;
-	private boolean spriteFlag;
+	private Texture texture;
+	private Label label;
 
 	@Override
 	public void act() {
-		if (pokemonRequestController.getPokemonSprite() != null) {
-			texture = pokemonRequestController.getPokemonSprite();
+		if (GameInfo.getSearchedPokemonInfo() != null) {
+			label.setText(GameInfo.getSearchedPokemonInfo().getName());
+		}
+		if (GameInfo.getSearchedPokemonSprite() != null) {
+			texture = GameInfo.getSearchedPokemonSprite();
 			SpriteBatch batch = new SpriteBatch();
 			batch.begin();
 			batch.draw(texture, 190, 190, 350, 350);
 			batch.end();
-			spriteFlag = true;
 		}
 	}
+
 	public MainStage() {
 		pokemonRequestController = new PokemonRequestController();
+		pokemonRequestController.requestPokemonById(25);
 		frameTable = new Stack();
 		fieldTable = new Table();
 		buttonTable = new Table();
 		frameTable = new Stack();
 		frameTable.setWidth(Gdx.graphics.getWidth());
 		frameTable.setHeight(Gdx.graphics.getHeight());
-		fieldTable.left().top();
+
+		makeField();
+		makeButtons();
 		frameTable.add(fieldTable);
 		frameTable.add(buttonTable);
-		makeButtons();
-		makeField();
+
 		this.addActor(frameTable);
 	}
 
@@ -59,7 +64,10 @@ public class MainStage extends Stage {
 		}
 		buttonTable.center().bottom().padBottom(10);
 	}
+
 	private void makeField() {
-		pokemonRequestController.makeRequest();
+		label = new Label("", Assets.skin);
+		fieldTable.add(label);
+		fieldTable.center().bottom().padBottom(150);
 	}
 }

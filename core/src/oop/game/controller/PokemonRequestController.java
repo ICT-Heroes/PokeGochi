@@ -1,6 +1,7 @@
 package oop.game.controller;
 
-import org.apache.http.client.fluent.Request;
+import oop.game.assets.GameInfo;
+import oop.game.model.Pokemon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
@@ -11,52 +12,58 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
 public class PokemonRequestController implements HttpResponseListener {
-	private Texture pokemonSprite;
+	public enum MakeType {
+		JSON_DATA, SPRITE_IMAGE;
+	}
+	private MakeType makeType;
 	private HttpRequest httpRequest;
 
-	public String getPokemonById(int id) {
-		String data = "";
-		try {
-			data = Request.Get("http://pokeapi.co/api/v1/pokemon/" + id).execute().returnContent().asString();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return data;
+	public void requestPokemonById(int id) {
+		makeType = MakeType.JSON_DATA;
+		makeRequest("http://pokeapi.co/api/v1/pokemon/" + id);
 	}
 
-	public Texture getImage() {
-		return pokemonSprite;
+	public void requestSpriteImageById(int id) {
+		makeType = MakeType.SPRITE_IMAGE;
+		makeRequest("http://pokeapi.co/media/img/" + id + ".png");
 	}
 
-	public void makeRequest() {
-		String url;
+	public void makeRequest(String url) {
 		String httpMethod = Net.HttpMethods.GET;
-		url = "http://pokeapi.co/media/img/1.png";
 		httpRequest = new HttpRequest(httpMethod);
 		httpRequest.setUrl(url);
 		Gdx.net.sendHttpRequest(httpRequest, PokemonRequestController.this);
-		System.out.println(httpRequest.getUrl());
-	}
-
-	private boolean checkIsNull(Texture texture) {
-		if (texture != null) {
-			return false;
-		} else {
-			return true;
-		}
+		Gdx.app.log("PokemonRequestController", httpRequest.getUrl());
 	}
 
 	@Override
 	public void handleHttpResponse(HttpResponse httpResponse) {
-		final byte[] rawImageBytes = httpResponse.getResult();
-		Gdx.app.postRunnable(new Runnable() {
-			public void run() {
-				Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
-				setPokemonSprite(new Texture(pixmap));
-				System.out.println(checkIsNull(pokemonSprite));
-			}
-		});
+		switch (makeType) {
+			case JSON_DATA :
+				final String data = httpResponse.getResultAsString();
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						makePokemon(data);
+					}
+				});
+				break;
+			case SPRITE_IMAGE :
+				final byte[] rawImageBytes = httpResponse.getResult();
+				Gdx.app.postRunnable(new Runnable() {
+					public void run() {
+						Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
+						GameInfo.setSearchedPokemonSprite(new Texture(pixmap));
+					}
+				});
+				break;
+
+		}
+	}
+
+	private void makePokemon(String data) {
+		Pokemon pokemon = PokemonMakeController.makePokemon(data);
+		GameInfo.setSearchedPokemonInfo(pokemon);
+		requestSpriteImageById(pokemon.getNational_id());
 	}
 
 	@Override
@@ -71,12 +78,19 @@ public class PokemonRequestController implements HttpResponseListener {
 
 	}
 
-	public Texture getPokemonSprite() {
-		return pokemonSprite;
+	public HttpRequest getHttpRequest() {
+		return httpRequest;
 	}
 
-	public void setPokemonSprite(Texture pokemonSprite) {
-		this.pokemonSprite = pokemonSprite;
+	public void setHttpRequest(HttpRequest httpRequest) {
+		this.httpRequest = httpRequest;
 	}
 
+	public MakeType getMakeType() {
+		return makeType;
+	}
+
+	public void setMakeType(MakeType makeType) {
+		this.makeType = makeType;
+	}
 }

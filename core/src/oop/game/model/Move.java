@@ -1,101 +1,32 @@
 package oop.game.model;
-import java.text.SimpleDateFormat;
 
-import org.json.JSONObject;
-
-/**
- * @author Michael
- *
- */
-public class Move extends ModelClass {
-
-	private String Category, Description, LearnType;
-	private int Power, Accuracy, PP, LearnedAt;
-	
-	/**
-	 * @param ID
-	 * @param LearnType
-	 * @param LearnedAt
-	 */
-	public Move(int ID, String LearnType, int LearnedAt){
-		String data = "";
-		
-		data = get("move/"+ID);
-		
-		JSONObject root = parse(data);
-		try {
-			//Define Properties
-			Name = root.getString("name");
-			URI = root.getString("resource_uri");
-			Category = root.getString("category");
-			Description = root.getString("description");
-			this.LearnType = LearnType;
-			
-			this.ID = root.getInt("id");
-			Power = root.getInt("power");
-			Accuracy = root.getInt("accuracy");
-			PP = root.getInt("pp");
-			this.LearnedAt = LearnedAt;
-			
-			Created = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(root.getString("created").substring(0, 19));
-			Modified = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(root.getString("modified").substring(0, 19));
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+public class Move {
+	private String learn_type;
+	private String name;
+	private String resource_uri;
+	private int level;
+	public String getLearn_type() {
+		return learn_type;
 	}
-	
-	/**
-	 * @param ID
-	 * @param LearnType
-	 */
-	public Move(int ID, String LearnType){
-		this(ID, LearnType, -1);
+	public void setLearn_type(String learn_type) {
+		this.learn_type = learn_type;
 	}
-	
-	/**
-	 * @param ID
-	 * @param LearnedAt
-	 */
-	public Move(int ID, int LearnedAt){
-		this(ID, "level up", LearnedAt);
+	public String getName() {
+		return name;
 	}
-	
-	/**
-	 * @param ID
-	 */
-	public Move(int ID){
-		this(ID, "", -1);
+	public void setName(String name) {
+		this.name = name;
 	}
-	
-	/**
-	 * @return Category
-	 */
-	public String getCategory(){return Category;}
-	/**
-	 * @return Description
-	 */
-	public String getDescription(){return Description;}
-	/**
-	 * @return LearnType
-	 */
-	public String getLearnType(){return LearnType;}
-	
-	/**
-	 * @return Power
-	 */
-	public int getPower(){return Power;}
-	/**
-	 * @return Accuracy
-	 */
-	public int getAccuracy(){return Accuracy;}
-	/**
-	 * @return PP
-	 */
-	public int getPP(){return PP;}
-	/**
-	 * @return Level
-	 */
-	public int getLevel(){return LearnedAt;}
-	
+	public String getResource_uri() {
+		return resource_uri;
+	}
+	public void setResource_uri(String resource_uri) {
+		this.resource_uri = resource_uri;
+	}
+	public int getLevel() {
+		return level;
+	}
+	public void setLevel(int level) {
+		this.level = level;
+	}
 }
