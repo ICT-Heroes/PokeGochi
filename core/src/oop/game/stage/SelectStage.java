@@ -1,25 +1,46 @@
 package oop.game.stage;
 
 import oop.game.assets.Assets;
+import oop.game.assets.GameInfo;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
-public class SelectStage extends Stage {
-	private TextButton textButton[];
-	private final String[] textButtonContent = {"새로하기", "이어하기", "도감보기", "종료하기"};
+public class SelectStage {
+	private Stack frameTable;
+	private Table imageTable, listTable;
+	private Label label;
+	private Texture texture;
+
+	public void act() {
+		if (GameInfo.getSearchedPokemonInfo() != null) {
+			label.setText(GameInfo.getSearchedPokemonInfo().getName());
+		}
+		if (GameInfo.getSearchedPokemonSprite() != null) {
+			texture = GameInfo.getSearchedPokemonSprite();
+			SpriteBatch batch = new SpriteBatch();
+			batch.begin();
+			batch.draw(texture, 190, 190, 350, 350);
+			batch.end();
+		}
+	}
 	public SelectStage() {
-		makeButtons();
+		frameTable = new Stack();
+		imageTable = new Table();
+		listTable = new Table();
+
+		makeImageTable();
+		makeListTable();
 	}
 
-	private void makeButtons() {
-		textButton = new TextButton[4];
-		for (int i = 0; i < textButton.length; i++) {
-			textButton[i] = new TextButton(textButtonContent[i], Assets.skin, "red");
-		}
-		textButton[0].addListener(new ClickListener() {
+	public void makeListTable() {
+		label = new Label("", Assets.skin);
+	}
 
-		});
+	public void makeImageTable() {
+
 	}
 }

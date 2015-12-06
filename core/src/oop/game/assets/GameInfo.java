@@ -5,6 +5,10 @@ import oop.game.model.Pokemon;
 import com.badlogic.gdx.graphics.Texture;
 
 public class GameInfo {
+	public enum GameState {
+		MENU, MAIN;
+	}
+	private static GameState gameState;
 	private static Pokemon searchedPokemonInfo;
 	private static Texture searchedPokemonSprite;
 
@@ -22,5 +26,13 @@ public class GameInfo {
 
 	public static void setSearchedPokemonSprite(Texture searchedPokemonSprite) {
 		GameInfo.searchedPokemonSprite = searchedPokemonSprite;
+	}
+
+	public static GameState getGameState() {
+		return gameState;
+	}
+
+	public static void setGameState(GameState gameState) {
+		GameInfo.gameState = gameState;
 	}
 }
