@@ -18,7 +18,7 @@ public class MenuScreen extends ScreenAdapter {
 
 	@Override
 	public void show() {
-		menuStage = new MenuStage();
+		menuStage = new MenuStage(game, game.getGameInfo());
 		Gdx.input.setInputProcessor(menuStage);
 	}
 
@@ -56,7 +56,7 @@ public class MenuScreen extends ScreenAdapter {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		menuStage.dispose();
 
 	}
 }

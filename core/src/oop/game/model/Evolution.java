@@ -2,6 +2,7 @@ package oop.game.model;
 
 public class Evolution {
 	private String detail, method, resource_uri, to;
+	private int level;
 
 	public String getDetail() {
 		return detail;
@@ -33,5 +34,13 @@ public class Evolution {
 
 	public void setTo(String to) {
 		this.to = to;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
 	}
 }
