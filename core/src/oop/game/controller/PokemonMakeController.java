@@ -10,7 +10,7 @@ public class PokemonMakeController {
 	public static Pokemon makePokemon(String data) {
 		Pokemon pokemon = new Pokemon();
 		if (data.equals("")) {
-			Gdx.app.log("PokemonInitializer", "Pokemon not found");
+			Gdx.app.log("PokemonMakeController", "Pokemon not found");
 			return null;
 		} else {
 			pokemon = new Json().fromJson(Pokemon.class, data);

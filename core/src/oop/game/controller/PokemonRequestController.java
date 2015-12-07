@@ -15,8 +15,13 @@ public class PokemonRequestController implements HttpResponseListener {
 	public enum MakeType {
 		JSON_DATA, SPRITE_IMAGE;
 	}
+	public PokemonRequestController(GameInfo gameInfo) {
+		this.gameInfo = gameInfo;
+	}
+	private GameInfo gameInfo;
 	private MakeType makeType;
 	private HttpRequest httpRequest;
+	private int spriteNumber;
 
 	public void requestPokemonById(int id) {
 		makeType = MakeType.JSON_DATA;
@@ -25,7 +30,8 @@ public class PokemonRequestController implements HttpResponseListener {
 
 	public void requestSpriteImageById(int id) {
 		makeType = MakeType.SPRITE_IMAGE;
-		makeRequest("http://pokeapi.co/media/img/" + id + ".png");
+		spriteNumber = id;
+		makeRequest("http://pokeapi.co/media/img/" + spriteNumber + ".png");
 	}
 
 	public void makeRequest(String url) {
@@ -38,12 +44,15 @@ public class PokemonRequestController implements HttpResponseListener {
 
 	@Override
 	public void handleHttpResponse(HttpResponse httpResponse) {
+		final String data;
 		switch (makeType) {
 			case JSON_DATA :
-				final String data = httpResponse.getResultAsString();
+				data = httpResponse.getResultAsString();
 				Gdx.app.postRunnable(new Runnable() {
 					public void run() {
-						makePokemon(data);
+						if (!data.equals("")) {
+							makePokemon(data);
+						}
 					}
 				});
 				break;
@@ -51,18 +60,33 @@ public class PokemonRequestController implements HttpResponseListener {
 				final byte[] rawImageBytes = httpResponse.getResult();
 				Gdx.app.postRunnable(new Runnable() {
 					public void run() {
-						Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
-						GameInfo.setSearchedPokemonSprite(new Texture(pixmap));
+						if (rawImageBytes.length > 0) {
+							makePokemonSprite(rawImageBytes);
+						}
 					}
 				});
 				break;
-
 		}
 	}
-
+	private void makePokemonSprite(byte[] rawImageBytes) {
+		Gdx.app.log("PokemonRequestController", "SpriteNumber : " + spriteNumber);
+		Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
+		if (gameInfo.getPokemonSpriteList()[spriteNumber] == null) {
+			gameInfo.getPokemonSpriteList()[spriteNumber] = new Texture(pixmap);
+		}
+		// gameInfo.setSearchedPokemonSprite(new
+		// Texture(pixmap));
+	}
 	private void makePokemon(String data) {
 		Pokemon pokemon = PokemonMakeController.makePokemon(data);
-		GameInfo.setSearchedPokemonInfo(pokemon);
+		if (pokemon != null) {
+			gameInfo.getPokemonList()[pokemon.getNational_id()] = pokemon;
+			Gdx.app.log("PokemonRequestController", "pokemon (" + pokemon.getNational_id() + ") is created");
+		}
+	}
+	private void makePokemonAndSprite(String data) {
+		Pokemon pokemon = PokemonMakeController.makePokemon(data);
+		gameInfo.setSearchedPokemonInfo(pokemon);
 		requestSpriteImageById(pokemon.getNational_id());
 	}
 

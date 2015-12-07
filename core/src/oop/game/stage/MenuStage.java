@@ -1,7 +1,11 @@
 package oop.game.stage;
 
 import oop.game.assets.Assets;
+import oop.game.assets.GameInfo;
+import oop.game.pokegochi.PokeGochi;
+import oop.game.screen.SelectScreen;
 
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
@@ -10,16 +14,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuStage extends Stage {
+	private PokeGochi game;
 	private TextButton textButton[];
 	private Table textButtonTable;
 	private Stack frameTable;
 	private Label label;
 	private final String[] textButtonContent = {"새로하자", "이어하자", "누가만듦", "그만할래"};
 
-	public MenuStage() {
+	public MenuStage(PokeGochi game, GameInfo gameInfo) {
+		this.game = game;
 		frameTable = new Stack();
 		makeLogo();
 		makeButtons();
+		this.addActor(frameTable);
 	}
 
 	private void makeLogo() {
@@ -41,9 +48,11 @@ public class MenuStage extends Stage {
 		}
 		frameTable.add(textButtonTable);
 		textButtonTable.padLeft(580).padBottom(200);
-		this.addActor(frameTable);
-		textButton[0].addListener(new ClickListener() {
 
+		textButton[0].addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				game.setScreen(new SelectScreen(game));
+			}
 		});
 	}
 }
