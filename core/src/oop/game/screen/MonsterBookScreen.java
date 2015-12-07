@@ -1,32 +1,33 @@
 package oop.game.screen;
 
 import oop.game.pokegochi.PokeGochi;
-import oop.game.stage.SelectStage;
+import oop.game.stage.MonsterBookStage;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public class SelectScreen implements Screen {
+public class MonsterBookScreen implements Screen {
 	private PokeGochi game;
-	private Stage selectStage;
+	private Stage monsterBookStage;
 
-	public SelectScreen(PokeGochi pokeGochi) {
-		this.game = pokeGochi;
+	public MonsterBookScreen(PokeGochi game) {
+		this.game = game;
 	}
+
 	@Override
 	public void show() {
-		selectStage = new SelectStage(game, game.getGameInfo());
-		Gdx.input.setInputProcessor(selectStage);
+		monsterBookStage = new MonsterBookStage(game, game.getGameInfo());
+		Gdx.input.setInputProcessor(monsterBookStage);
 	}
 
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(0, 0, 0, 1);
-		selectStage.draw();
-		selectStage.act();
+		monsterBookStage.draw();
+		monsterBookStage.act();
 	}
 
 	@Override

@@ -9,16 +9,16 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class MainScreen implements Screen {
-	private PokeGochi pokeGochi;
+	private PokeGochi game;
 	private Stage mainStage;
 
 	public MainScreen(PokeGochi game) {
-		this.pokeGochi = game;
+		this.game = game;
 	}
 
 	@Override
 	public void show() {
-		mainStage = new MainStage(pokeGochi.getGameInfo());
+		mainStage = new MainStage(game, game.getGameInfo());
 		Gdx.input.setInputProcessor(mainStage);
 	}
 

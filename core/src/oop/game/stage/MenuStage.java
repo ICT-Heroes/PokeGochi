@@ -46,7 +46,6 @@ public class MenuStage extends Stage {
 			textButton[i] = new TextButton(textButtonContent[i], Assets.skin, "red");
 			textButtonTable.add(textButton[i]).width(170).height(50).padBottom(20);
 			textButtonTable.row();
-
 		}
 		frameTable.add(textButtonTable);
 		textButtonTable.padLeft(580).padBottom(200);
