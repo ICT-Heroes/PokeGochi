@@ -41,6 +41,7 @@ public class MonsterBookStage extends Stage {
 		}
 		showBookTable();
 	}
+
 	private void moveImage() {
 		angle += 0.04f;
 		spritePosition.y = (float) (220 + 20 * Math.sin(angle));
@@ -100,6 +101,7 @@ public class MonsterBookStage extends Stage {
 		frameTable.add(bookTable);
 		frameTable.add(topTable);
 	}
+
 	private void makeSpriteImage(float x, float y) {
 		texture = gameInfo.getSelectedPokemonSprite();
 		SpriteBatch batch = new SpriteBatch();
@@ -121,8 +123,10 @@ public class MonsterBookStage extends Stage {
 			nameButton.setText(name);
 			String type = getType(pokemon);
 			typeButton.setText(type);
-			heightButton.setText("Height : " + (int) (Integer.parseInt(pokemon.getHeight()) * 0.1) + "m");
-			weightButton.setText("Weight : " + pokemon.getWeight() + "kg");
+			int height = Integer.parseInt(pokemon.getHeight());
+			heightButton.setText("Height : " + (float) (Math.round(height * 100 * height)) / (1000 * height) + "m");
+			int weight = Integer.parseInt(pokemon.getWeight());
+			weightButton.setText("Weight : " + (float) (Math.round(weight * 10 * weight)) / (100 * weight) + "kg");
 			if (!pokemon.getEvolutions().isEmpty()) {
 				evolutionButton.setText("Evolution : " + pokemon.getEvolutions().get(0).getTo());
 			}

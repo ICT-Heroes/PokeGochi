@@ -5,6 +5,7 @@ import oop.game.assets.GameInfo;
 import oop.game.controller.PokemonRequestController;
 import oop.game.pokegochi.PokeGochi;
 import oop.game.screen.MonsterBookScreen;
+import oop.game.screen.TrainingScreen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -42,7 +43,7 @@ public class MainStage extends Stage {
 			drawSprite(spritePosition.x, spritePosition.y);
 		}
 	}
-	
+
 	private void moveImage() {
 		angle += 0.05f;
 		spritePosition.x = (float) (190 + 30 * Math.sin(angle));
@@ -85,7 +86,11 @@ public class MainStage extends Stage {
 			textButton[i].setColor(Color.CORAL);
 			buttonTable.add(textButton[i]).width(160).height(100).padRight(10);
 		}
-
+		textButton[1].addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				game.setScreen(new TrainingScreen(game));
+			}
+		});
 		textButton[2].addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				game.setScreen(new MonsterBookScreen(game));

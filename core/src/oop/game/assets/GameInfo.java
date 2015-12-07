@@ -17,6 +17,8 @@ public class GameInfo {
 	private Texture[] pokemonSpriteList;
 	private Pokedex pokedex;
 	private int selectedPokemonId;
+	private int fightPokemonId;
+	private Texture fightPokemonSprite;
 
 	public GameInfo() {
 		setPokemonList(new Pokemon[718]);
@@ -87,6 +89,22 @@ public class GameInfo {
 
 	public void setSelectedPokemonId(int selectedPokemonId) {
 		this.selectedPokemonId = selectedPokemonId;
+	}
+
+	public int getFightPokemonId() {
+		return fightPokemonId;
+	}
+
+	public void setFightPokemonId(int fightPokemonId) {
+		this.fightPokemonId = fightPokemonId;
+	}
+
+	public Texture getFightPokemonSprite() {
+		return fightPokemonSprite;
+	}
+
+	public void setFightPokemonSprite(Texture fightPokemonSprite) {
+		this.fightPokemonSprite = fightPokemonSprite;
 	}
 
 }
