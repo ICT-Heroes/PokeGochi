@@ -26,11 +26,11 @@ public class MainStage extends Stage {
 
 	@Override
 	public void act() {
-		if (gameInfo.getSearchedPokemonInfo() != null) {
-			label.setText(gameInfo.getSearchedPokemonInfo().getName());
+		if (gameInfo.getSelectedPokemonInfo() != null) {
+			label.setText(gameInfo.getSelectedPokemonInfo().getName());
 		}
-		if (gameInfo.getSearchedPokemonSprite() != null) {
-			texture = gameInfo.getSearchedPokemonSprite();
+		if (gameInfo.getSelectedPokemonSprite() != null) {
+			texture = gameInfo.getSelectedPokemonSprite();
 			SpriteBatch batch = new SpriteBatch();
 			batch.begin();
 			batch.draw(texture, 190, 190, 350, 350);
@@ -41,7 +41,7 @@ public class MainStage extends Stage {
 	public MainStage(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
 		pokemonRequestController = new PokemonRequestController(gameInfo);
-		pokemonRequestController.requestPokemonById(25);
+		pokemonRequestController.requestPokemonById(gameInfo.getSelectedPokemonId());
 		frameTable = new Stack();
 		fieldTable = new Table();
 		buttonTable = new Table();

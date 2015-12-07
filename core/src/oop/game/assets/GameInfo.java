@@ -11,11 +11,12 @@ public class GameInfo {
 		MENU, MAIN;
 	}
 	private GameState gameState;
-	private Pokemon searchedPokemonInfo;
-	private Texture searchedPokemonSprite;
+	private Pokemon selectedPokemonInfo;
+	private Texture selectedPokemonSprite;
 	private Pokemon[] pokemonList;
 	private Texture[] pokemonSpriteList;
 	private Pokedex pokedex;
+	private int selectedPokemonId;
 
 	public GameInfo() {
 		setPokemonList(new Pokemon[718]);
@@ -36,20 +37,20 @@ public class GameInfo {
 		}
 	}
 
-	public Pokemon getSearchedPokemonInfo() {
-		return searchedPokemonInfo;
+	public Pokemon getSelectedPokemonInfo() {
+		return selectedPokemonInfo;
 	}
 
-	public void setSearchedPokemonInfo(Pokemon searchedPokemonInfo) {
-		this.searchedPokemonInfo = searchedPokemonInfo;
+	public void setSelectedPokemonInfo(Pokemon selectedPokemonInfo) {
+		this.selectedPokemonInfo = selectedPokemonInfo;
 	}
 
-	public Texture getSearchedPokemonSprite() {
-		return searchedPokemonSprite;
+	public Texture getSelectedPokemonSprite() {
+		return selectedPokemonSprite;
 	}
 
-	public void setSearchedPokemonSprite(Texture searchedPokemonSprite) {
-		this.searchedPokemonSprite = searchedPokemonSprite;
+	public void setSelectedPokemonSprite(Texture selectedPokemonSprite) {
+		this.selectedPokemonSprite = selectedPokemonSprite;
 	}
 
 	public GameState getGameState() {
@@ -78,6 +79,14 @@ public class GameInfo {
 
 	public void setPokedex(Pokedex pokedex) {
 		this.pokedex = pokedex;
+	}
+
+	public int getSelectedPokemonId() {
+		return selectedPokemonId;
+	}
+
+	public void setSelectedPokemonId(int selectedPokemonId) {
+		this.selectedPokemonId = selectedPokemonId;
 	}
 
 }

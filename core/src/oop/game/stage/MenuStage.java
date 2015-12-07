@@ -19,10 +19,12 @@ public class MenuStage extends Stage {
 	private Table textButtonTable;
 	private Stack frameTable;
 	private Label label;
+	private GameInfo gameInfo;
 	private final String[] textButtonContent = {"새로하자", "이어하자", "누가만듦", "그만할래"};
 
 	public MenuStage(PokeGochi game, GameInfo gameInfo) {
 		this.game = game;
+		this.gameInfo = gameInfo;
 		frameTable = new Stack();
 		makeLogo();
 		makeButtons();
@@ -51,7 +53,9 @@ public class MenuStage extends Stage {
 
 		textButton[0].addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				game.setScreen(new SelectScreen(game));
+				if (gameInfo.getPokedex() != null) {
+					game.setScreen(new SelectScreen(game));
+				}
 			}
 		});
 	}
