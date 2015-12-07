@@ -1,6 +1,7 @@
 package oop.game.controller;
 
 import oop.game.assets.GameInfo;
+import oop.game.model.Pokedex;
 import oop.game.model.Pokemon;
 
 import com.badlogic.gdx.Gdx;
@@ -13,7 +14,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class PokemonRequestController implements HttpResponseListener {
 	public enum MakeType {
-		JSON_DATA, SPRITE_IMAGE;
+		POKEDEX, JSON_DATA, SPRITE_IMAGE;
 	}
 	public PokemonRequestController(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
@@ -26,6 +27,11 @@ public class PokemonRequestController implements HttpResponseListener {
 	public void requestPokemonById(int id) {
 		makeType = MakeType.JSON_DATA;
 		makeRequest("http://pokeapi.co/api/v1/pokemon/" + id);
+	}
+
+	public void requestPokedex() {
+		makeType = MakeType.POKEDEX;
+		makeRequest("http://pokeapi.co/api/v1/pokedex/1");
 	}
 
 	public void requestSpriteImageById(int id) {
@@ -43,30 +49,43 @@ public class PokemonRequestController implements HttpResponseListener {
 	}
 
 	@Override
-	public void handleHttpResponse(HttpResponse httpResponse) {
+	synchronized public void handleHttpResponse(HttpResponse httpResponse) {
 		final String data;
-		switch (makeType) {
-			case JSON_DATA :
-				data = httpResponse.getResultAsString();
-				Gdx.app.postRunnable(new Runnable() {
-					public void run() {
-						if (!data.equals("")) {
-							makePokemon(data);
+		synchronized (makeType) {
+			switch (makeType) {
+				case JSON_DATA :
+					data = httpResponse.getResultAsString();
+					Gdx.app.postRunnable(new Runnable() {
+						synchronized public void run() {
+							if (!data.equals("")) {
+								makePokemon(data);
+							}
 						}
-					}
-				});
-				break;
-			case SPRITE_IMAGE :
-				final byte[] rawImageBytes = httpResponse.getResult();
-				Gdx.app.postRunnable(new Runnable() {
-					public void run() {
-						if (rawImageBytes.length > 0) {
-							makePokemonSprite(rawImageBytes);
+					});
+					break;
+				case POKEDEX :
+					data = httpResponse.getResultAsString();
+					Gdx.app.postRunnable(new Runnable() {
+						synchronized public void run() {
+							if (!data.equals("")) {
+								makePokemonList(data);
+							}
 						}
-					}
-				});
-				break;
+					});
+					break;
+				case SPRITE_IMAGE :
+					final byte[] rawImageBytes = httpResponse.getResult();
+					Gdx.app.postRunnable(new Runnable() {
+						synchronized public void run() {
+							if (rawImageBytes.length > 0) {
+								makePokemonSprite(rawImageBytes);
+							}
+						}
+					});
+					break;
+			}
 		}
+
 	}
 	private void makePokemonSprite(byte[] rawImageBytes) {
 		Gdx.app.log("PokemonRequestController", "SpriteNumber : " + spriteNumber);
@@ -84,6 +103,13 @@ public class PokemonRequestController implements HttpResponseListener {
 			Gdx.app.log("PokemonRequestController", "pokemon (" + pokemon.getNational_id() + ") is created");
 		}
 	}
+
+	private void makePokemonList(String data) {
+
+		Pokedex pokedex = PokemonMakeController.makePokemonList(data);
+		gameInfo.setPokedex(pokedex);
+	}
+
 	private void makePokemonAndSprite(String data) {
 		Pokemon pokemon = PokemonMakeController.makePokemon(data);
 		gameInfo.setSearchedPokemonInfo(pokemon);
@@ -117,4 +143,5 @@ public class PokemonRequestController implements HttpResponseListener {
 	public void setMakeType(MakeType makeType) {
 		this.makeType = makeType;
 	}
+
 }

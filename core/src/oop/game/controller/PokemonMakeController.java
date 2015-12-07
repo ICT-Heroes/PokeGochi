@@ -1,5 +1,6 @@
 package oop.game.controller;
 
+import oop.game.model.Pokedex;
 import oop.game.model.Pokemon;
 
 import com.badlogic.gdx.Gdx;
@@ -16,5 +17,11 @@ public class PokemonMakeController {
 			pokemon = new Json().fromJson(Pokemon.class, data);
 			return pokemon;
 		}
+	}
+
+	public static Pokedex makePokemonList(String data) {
+		System.out.println(data);
+		Pokedex pokedex = new Json().fromJson(Pokedex.class, data);
+		return pokedex;
 	}
 }

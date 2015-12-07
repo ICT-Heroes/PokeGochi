@@ -36,8 +36,8 @@ public class MenuStage extends Stage {
 		labelTable.center().bottom().padLeft(580).padBottom(400);
 		frameTable.add(labelTable);
 	}
-	private void makeButtons() {
 
+	private void makeButtons() {
 		textButtonTable = new Table();
 		textButton = new TextButton[4];
 		for (int i = 0; i < textButton.length; i++) {

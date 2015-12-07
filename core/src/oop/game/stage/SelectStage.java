@@ -2,10 +2,10 @@ package oop.game.stage;
 
 import oop.game.assets.Assets;
 import oop.game.assets.GameInfo;
+import oop.game.model.Pokemon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
@@ -36,35 +36,28 @@ public class SelectStage extends Stage {
 	}
 
 	public void act(float delta) {
-		if (gameInfo.getSearchedPokemonSprite() != null) {
-			texture = gameInfo.getSearchedPokemonSprite();
-			SpriteBatch batch = new SpriteBatch();
-			batch.begin();
-			batch.draw(texture, 190, 190, 350, 350);
-			batch.end();
-		}
-		scrollTable.act(delta);
 		frameTable.act(delta);
 	}
 
 	public void makeListTable() {
-		for (int i = 0; i < 15; i++) {
-			if (gameInfo.getPokemonList()[i] != null) {
-				String content = "No." + gameInfo.getPokemonList()[i].getNational_id()
-						+ gameInfo.getPokemonList()[i].getName();
+		for (int i = 0; i < 690; i++) {
+			if (gameInfo.getPokedex().getPokemon().get(i) != null) {
+				Pokemon pokemon = gameInfo.getPokedex().getPokemon().get(i);
+				String content = "No." + pokemon.getResource_uri().split("/")[3] + " " + pokemon.getName();
 				pokemonButton[i] = new TextButton(content, Assets.skin, "red");
 				listTable.add(pokemonButton[i]).width(350).height(50);
 				listTable.row();
 			}
+			listTable.left();
 		}
-		buttonScroll = new ScrollPane(listTable, Assets.skin);
+		buttonScroll = new ScrollPane(listTable, Assets.skin, "red");
 		buttonScroll.setForceScroll(false, true);
 		buttonScroll.setFlickScroll(true);
 		buttonScroll.setOverscroll(false, true);
-		scrollTable.add(buttonScroll).size(350, 580);
+		buttonScroll.setFadeScrollBars(false);
+		scrollTable.add(buttonScroll).right().size(390, 500);
 		frameTable.add(scrollTable);
 	}
-
 	public void makeImageTable() {
 
 	}
