@@ -31,9 +31,10 @@ public class TrainingStage extends Stage {
 		angle += 0.1f;
 		if (angle > 3.14f)
 			angle = 0;
-		if (count < 150)
-		spritePosition.x = (float) (300 + 30 * Math.sin(angle));
-		count++;
+		if (count < 1500)
+			spritePosition.x = (float) (300 + 30 * Math.sin(angle));
+		if (count < 1570)
+			count += 10;
 	}
 
 	public TrainingStage(PokeGochi game, GameInfo gameInfo) {
@@ -55,10 +56,10 @@ public class TrainingStage extends Stage {
 		TextureRegion fightPokemon = new TextureRegion(gameInfo.getSelectedPokemonSprite());
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
-		if(count < 150)
+		if(count < 1500)
 			batch.draw(character, 350 - x, y - 100, 300, 300);//, 300, 300, 1, 1, 90);
 		else
-			batch.draw(character,  100 - x, y - 90, 300, 300, 300, 300, 1, 1, 90);
+			batch.draw(character,  100 - x, y - 110, 300, 300, 300, 300, 1, 1, count-1500);
 		batch.draw(fightPokemon, x, y - 100, 300, 300);
 		batch.end();
 	}
