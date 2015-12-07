@@ -4,6 +4,7 @@ import oop.game.assets.Assets;
 import oop.game.assets.GameInfo;
 import oop.game.controller.PokemonRequestController;
 import oop.game.pokegochi.PokeGochi;
+import oop.game.screen.FightScreen;
 import oop.game.screen.MonsterBookScreen;
 import oop.game.screen.TrainingScreen;
 
@@ -41,7 +42,7 @@ public class MainStage extends Stage {
 		}
 		if (gameInfo.getSelectedPokemonSprite() != null) {
 			if(dirty > 300){
-				// dirt 생성
+				// 일정 시간 지나면 dirt 생성
 				tmplabel = new Label("똥이 생성되었습니다", Assets.skin);
 				tmplabel.scaleBy(3.0f);
 				Table labelTable = new Table();
@@ -115,6 +116,7 @@ public class MainStage extends Stage {
 		});
 		textButton[3].addListener(new ClickListener(){
 			public void clicked(InputEvent event, float x, float y){
+				game.setScreen(new FightScreen(game));
 				if(dirty > 300)
 					cleanPokemon();
 			}
