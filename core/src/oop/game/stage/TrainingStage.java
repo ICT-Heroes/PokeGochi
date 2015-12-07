@@ -18,6 +18,7 @@ public class TrainingStage extends Stage {
 	private Vector2 spritePosition;
 	private Texture character, fightPokemon;
 	private float angle;
+	private int count;
 
 	public void act(float delta) {
 		if (gameInfo.getSelectedPokemonSprite() != null) {
@@ -30,13 +31,16 @@ public class TrainingStage extends Stage {
 		angle += 0.1f;
 		if (angle > 3.14f)
 			angle = 0;
+		if (count < 150)
 		spritePosition.x = (float) (300 + 30 * Math.sin(angle));
+		count++;
 	}
 
 	public TrainingStage(PokeGochi game, GameInfo gameInfo) {
 		this.game = game;
 		this.gameInfo = gameInfo;
 		angle = 0;
+		count = 0;
 		frameTable = new Stack();
 		frameTable.setWidth(Gdx.graphics.getWidth() / 2);
 		frameTable.setHeight(Gdx.graphics.getHeight());
@@ -51,8 +55,11 @@ public class TrainingStage extends Stage {
 		TextureRegion fightPokemon = new TextureRegion(gameInfo.getSelectedPokemonSprite());
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
-		batch.draw(character, 500 - x, y, 300, 300, 300, 300, 1, 1, 90);
-		batch.draw(fightPokemon, x, y, 300, 300);
+		if(count < 150)
+			batch.draw(character, 350 - x, y - 100, 300, 300);//, 300, 300, 1, 1, 90);
+		else
+			batch.draw(character,  100 - x, y - 90, 300, 300, 300, 300, 1, 1, 90);
+		batch.draw(fightPokemon, x, y - 100, 300, 300);
 		batch.end();
 	}
 }
