@@ -32,7 +32,8 @@ public class MenuStage extends Stage {
 	}
 
 	private void makeLogo() {
-		label = new Label("포켓고치", Assets.skin);
+		label = new Label("PokeGochi!", Assets.skin);
+		label.scaleBy(3.0f);
 		Table labelTable = new Table();
 		labelTable.add(label);
 		labelTable.center().bottom().padLeft(580).padBottom(400);
@@ -46,7 +47,6 @@ public class MenuStage extends Stage {
 			textButton[i] = new TextButton(textButtonContent[i], Assets.skin, "red");
 			textButtonTable.add(textButton[i]).width(170).height(50).padBottom(20);
 			textButtonTable.row();
-
 		}
 		frameTable.add(textButtonTable);
 		textButtonTable.padLeft(580).padBottom(200);
