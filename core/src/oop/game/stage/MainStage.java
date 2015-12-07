@@ -34,7 +34,6 @@ public class MainStage extends Stage {
 
 	@Override
 	public void act() {
-
 		if (gameInfo.getSelectedPokemonInfo() != null) {
 			label.setText(gameInfo.getSelectedPokemonInfo().getName());
 		}
@@ -43,10 +42,12 @@ public class MainStage extends Stage {
 			drawSprite(spritePosition.x, spritePosition.y);
 		}
 	}
+	
 	private void moveImage() {
 		angle += 0.05f;
 		spritePosition.x = (float) (190 + 30 * Math.sin(angle));
 	}
+
 	private void drawSprite(float x, float y) {
 		texture = gameInfo.getSelectedPokemonSprite();
 		SpriteBatch batch = new SpriteBatch();

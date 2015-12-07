@@ -32,7 +32,8 @@ public class MenuStage extends Stage {
 	}
 
 	private void makeLogo() {
-		label = new Label("포켓고치", Assets.skin);
+		label = new Label("PokeGochi!", Assets.skin);
+		label.scaleBy(3.0f);
 		Table labelTable = new Table();
 		labelTable.add(label);
 		labelTable.center().bottom().padLeft(580).padBottom(400);

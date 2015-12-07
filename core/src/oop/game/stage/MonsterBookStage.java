@@ -13,6 +13,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -30,12 +31,19 @@ public class MonsterBookStage extends Stage {
 	private Texture texture;
 	private ImageButton escapeButton, leftArrowButton, rightArrowButton;
 	private TextButton nameButton, evolutionButton, typeButton, heightButton, weightButton;
+	private Vector2 spritePosition;
+	private float angle;
 
 	public void act(float delta) {
 		if (gameInfo.getSelectedPokemonSprite() != null) {
-			makeSpriteImage();
+			moveImage();
+			makeSpriteImage(spritePosition.x, spritePosition.y);
 		}
 		showBookTable();
+	}
+	private void moveImage() {
+		angle += 0.04f;
+		spritePosition.y = (float) (220 + 20 * Math.sin(angle));
 	}
 
 	public MonsterBookStage(PokeGochi game, GameInfo gameInfo) {
@@ -45,7 +53,8 @@ public class MonsterBookStage extends Stage {
 		frameTable.setWidth(Gdx.graphics.getWidth() / 2);
 		frameTable.setHeight(Gdx.graphics.getHeight());
 
-		makeSpriteImage();
+		spritePosition = new Vector2(35, 220);
+		makeSpriteImage(spritePosition.x, spritePosition.y);
 		makeBookTable();
 		showBookTable();
 
@@ -53,6 +62,7 @@ public class MonsterBookStage extends Stage {
 	}
 
 	private void makeBookTable() {
+
 		escapeButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(Assets.uiCross)),
 				new TextureRegionDrawable(new TextureRegion(Assets.uiCrossDown)));
 		nameButton = new TextButton("", Assets.skin, "yellow");
@@ -90,11 +100,11 @@ public class MonsterBookStage extends Stage {
 		frameTable.add(bookTable);
 		frameTable.add(topTable);
 	}
-	private void makeSpriteImage() {
+	private void makeSpriteImage(float x, float y) {
 		texture = gameInfo.getSelectedPokemonSprite();
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
-		batch.draw(texture, 35, 200, 300, 300);
+		batch.draw(texture, x, y, 300, 300);
 		batch.end();
 	}
 
