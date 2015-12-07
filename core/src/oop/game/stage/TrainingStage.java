@@ -1,22 +1,31 @@
 package oop.game.stage;
 
+import oop.game.assets.Assets;
 import oop.game.assets.GameInfo;
 import oop.game.pokegochi.PokeGochi;
+import oop.game.screen.MainScreen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class TrainingStage extends Stage {
 	private PokeGochi game;
 	private GameInfo gameInfo;
 	private Stack frameTable;
+	private Table trainTable;
 	private Vector2 spritePosition;
 	private Texture character, fightPokemon;
+	private ImageButton escapeButton;
 	private float angle;
 	private int count;
 
@@ -37,7 +46,7 @@ public class TrainingStage extends Stage {
 			count += 10;
 	}
 
-	public TrainingStage(PokeGochi game, GameInfo gameInfo) {
+	public TrainingStage(final PokeGochi game, GameInfo gameInfo) {
 		this.game = game;
 		this.gameInfo = gameInfo;
 		angle = 0;
@@ -48,6 +57,18 @@ public class TrainingStage extends Stage {
 		spritePosition = new Vector2(300, 300);
 		makeFightImage(spritePosition.x, spritePosition.y);
 
+		trainTable = new Table();
+		trainTable.left().top().padLeft(20).padTop(20);
+		escapeButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(Assets.uiCross)),
+				new TextureRegionDrawable(new TextureRegion(Assets.uiCrossDown)));
+		trainTable.add(escapeButton);
+		escapeButton.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				game.setScreen(new MainScreen(game));
+			}
+		});
+
+		frameTable.add(trainTable);
 		this.addActor(frameTable);
 	}
 
