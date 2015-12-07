@@ -92,6 +92,7 @@ public class PokemonRequestController implements HttpResponseListener {
 		Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
 		if (gameInfo.getPokemonSpriteList()[spriteNumber] == null) {
 			gameInfo.getPokemonSpriteList()[spriteNumber] = new Texture(pixmap);
+			gameInfo.setSelectedPokemonSprite(new Texture(pixmap));
 		}
 		// gameInfo.setSearchedPokemonSprite(new
 		// Texture(pixmap));
@@ -100,6 +101,7 @@ public class PokemonRequestController implements HttpResponseListener {
 		Pokemon pokemon = PokemonMakeController.makePokemon(data);
 		if (pokemon != null) {
 			gameInfo.getPokemonList()[pokemon.getNational_id()] = pokemon;
+			gameInfo.setSelectedPokemonInfo(pokemon);
 			Gdx.app.log("PokemonRequestController", "pokemon (" + pokemon.getNational_id() + ") is created");
 		}
 	}
@@ -112,7 +114,7 @@ public class PokemonRequestController implements HttpResponseListener {
 
 	private void makePokemonAndSprite(String data) {
 		Pokemon pokemon = PokemonMakeController.makePokemon(data);
-		gameInfo.setSearchedPokemonInfo(pokemon);
+		gameInfo.setSelectedPokemonInfo(pokemon);
 		requestSpriteImageById(pokemon.getNational_id());
 	}
 

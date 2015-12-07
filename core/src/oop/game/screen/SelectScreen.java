@@ -9,22 +9,23 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class SelectScreen implements Screen {
-	private PokeGochi pokeGochi;
+	private PokeGochi game;
 	private Stage selectStage;
 
 	public SelectScreen(PokeGochi pokeGochi) {
-		this.pokeGochi = pokeGochi;
+		this.game = pokeGochi;
 	}
 	@Override
 	public void show() {
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		selectStage = new SelectStage(pokeGochi.getGameInfo());
+
+		selectStage = new SelectStage(game, game.getGameInfo());
 		Gdx.input.setInputProcessor(selectStage);
 	}
 
 	@Override
 	public void render(float delta) {
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		selectStage.draw();
 		selectStage.act();
 	}
