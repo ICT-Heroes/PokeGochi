@@ -181,7 +181,7 @@ public class TrainingStage extends Stage {
 	}
 
 	private void showBookTable() {
-		Pokemon pokemon = gameInfo.getSelectedPokemonInfo();
+		Pokemon pokemon = gameInfo.getFightPokemonInfo();
 		if (pokemon != null) {
 			enemyButton.getLabel().setFontScale(0.7f);
 			nameButton.getLabel().setFontScale(0.7f);
