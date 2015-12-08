@@ -75,7 +75,7 @@ public class MainStage extends Stage {
 		angle = 0;
 		dirty = 0;
 		pokemonRequestController = new PokemonRequestController(gameInfo);
-		pokemonRequestController.requestPokemonById(gameInfo.getSelectedPokemonId());
+		pokemonRequestController.requestSelectedPokemonById(gameInfo.getSelectedPokemonId());
 		frameTable = new Stack();
 		fieldTable = new Table();
 		buttonTable = new Table();

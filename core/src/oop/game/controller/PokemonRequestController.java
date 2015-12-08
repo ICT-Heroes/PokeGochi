@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class PokemonRequestController implements HttpResponseListener {
 	public enum MakeType {
-		POKEDEX, ENEMY_JSON_DATA, JSON_DATA, SPRITE_IMAGE, ENEMY_SPRITE_IMAGE;
+		POKEDEX, ENEMY_JSON_DATA, JSON_DATA, SPRITE_IMAGE, ENEMY_SPRITE_IMAGE, SEARCH_JSON_DATA, SEARCH_SPRITE_IMAGE;
 	}
 	public PokemonRequestController(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
@@ -26,23 +26,37 @@ public class PokemonRequestController implements HttpResponseListener {
 	private HttpRequest httpRequest;
 	private int spriteNumber, enemySpriteNumber;
 
-	public void requestPokemonById(int id) {
-		makeType = MakeType.JSON_DATA;
+	public void requestSelectedPokemonById(int id) {
+		gameInfo.setSelectedPokemonId(id);
+		requestPokemonById(id, MakeType.JSON_DATA);
+	}
+
+	public void searchPokemonById(int id) {
+		gameInfo.setSearchedPokemonId(id);
+		requestPokemonById(id, MakeType.SEARCH_JSON_DATA);
+	}
+
+	public void requestPokemonById(int id, MakeType makeType) {
+		this.makeType = makeType;
 		makeRequest("http://pokeapi.co/api/v1/pokemon/" + id);
 	}
 
 	public void requestRandomEnemy() {
-		makeType = MakeType.ENEMY_JSON_DATA;
 		Random random = new Random();
 		random.setSeed(System.currentTimeMillis());
 		int randomId = random.nextInt(718) + 1;
 		gameInfo.setEnemyPokemonId(randomId);
-		makeRequest("http://pokeapi.co/api/v1/pokemon/" + randomId);
+		requestPokemonById(randomId, MakeType.ENEMY_JSON_DATA);
 	}
 
 	public void requestEnemySpriteImageById(int id) {
 		makeType = MakeType.ENEMY_SPRITE_IMAGE;
 		enemySpriteNumber = id;
+		makeRequest("http://pokeapi.co/media/img/" + id + ".png");
+	}
+
+	public void requestSearchSpriteImageById(int id) {
+		makeType = MakeType.SEARCH_SPRITE_IMAGE;
 		makeRequest("http://pokeapi.co/media/img/" + id + ".png");
 	}
 
@@ -54,6 +68,7 @@ public class PokemonRequestController implements HttpResponseListener {
 	public void requestSpriteImageById(int id) {
 		makeType = MakeType.SPRITE_IMAGE;
 		spriteNumber = id;
+		gameInfo.setSearchedPokemonId(id);
 		makeRequest("http://pokeapi.co/media/img/" + spriteNumber + ".png");
 	}
 
@@ -70,6 +85,16 @@ public class PokemonRequestController implements HttpResponseListener {
 		final String data;
 		synchronized (makeType) {
 			switch (makeType) {
+				case SEARCH_JSON_DATA :
+					data = httpResponse.getResultAsString();
+					Gdx.app.postRunnable(new Runnable() {
+						synchronized public void run() {
+							if (!data.equals("")) {
+								makeSearchPokemon(data);
+							}
+						}
+					});
+					break;
 				case ENEMY_JSON_DATA :
 					data = httpResponse.getResultAsString();
 					Gdx.app.postRunnable(new Runnable() {
@@ -100,6 +125,18 @@ public class PokemonRequestController implements HttpResponseListener {
 						}
 					});
 					break;
+
+				case SEARCH_SPRITE_IMAGE :
+					final byte[] rawSearchImageBytes = httpResponse.getResult();
+					Gdx.app.postRunnable(new Runnable() {
+						synchronized public void run() {
+							if (rawSearchImageBytes.length > 0) {
+								makeSearchPokemonSprite(rawSearchImageBytes);
+							}
+						}
+					});
+					break;
+
 				case ENEMY_SPRITE_IMAGE :
 					final byte[] rawEnemyImageBytes = httpResponse.getResult();
 					Gdx.app.postRunnable(new Runnable() {
@@ -124,6 +161,13 @@ public class PokemonRequestController implements HttpResponseListener {
 		}
 
 	}
+	protected void makeSearchPokemonSprite(byte[] rawSearchImageBytes) {
+		Pixmap pixmap = new Pixmap(rawSearchImageBytes, 0, rawSearchImageBytes.length);
+		gameInfo.getPokemonSpriteList()[spriteNumber] = new Texture(pixmap);
+		gameInfo.setSearchedPokemonSprite(new Texture(pixmap));
+
+	}
+
 	private void makeEnemyPokemonSprite(byte[] rawImageBytes) {
 		Gdx.app.log("PokemonRequestController", "SpriteNumber : " + spriteNumber);
 		Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
@@ -139,6 +183,7 @@ public class PokemonRequestController implements HttpResponseListener {
 		if (gameInfo.getPokemonSpriteList()[spriteNumber] == null) {
 			gameInfo.getPokemonSpriteList()[spriteNumber] = new Texture(pixmap);
 			gameInfo.setSelectedPokemonSprite(new Texture(pixmap));
+			gameInfo.setSearchedPokemonSprite(new Texture(pixmap));
 		}
 	}
 
@@ -151,13 +196,24 @@ public class PokemonRequestController implements HttpResponseListener {
 		requestEnemySpriteImageById(pokemon.getNational_id());
 	}
 
+	private void makeSearchPokemon(String data) {
+		Pokemon pokemon = PokemonMakeController.makePokemon(data);
+		if (pokemon != null) {
+			gameInfo.setSearchedPokemonInfo(pokemon);
+			Gdx.app.log("PokemonRequestController", "pokemon (" + pokemon.getNational_id() + ") is created");
+		}
+		requestSearchSpriteImageById(pokemon.getNational_id());
+	}
+
 	private void makePokemon(String data) {
 		Pokemon pokemon = PokemonMakeController.makePokemon(data);
 		if (pokemon != null) {
 			gameInfo.getPokemonList()[pokemon.getNational_id()] = pokemon;
 			gameInfo.setSelectedPokemonInfo(pokemon);
+			gameInfo.setSearchedPokemonInfo(pokemon);
 			Gdx.app.log("PokemonRequestController", "pokemon (" + pokemon.getNational_id() + ") is created");
 		}
+		requestSpriteImageById(pokemon.getNational_id());
 	}
 
 	private void makePokemonList(String data) {

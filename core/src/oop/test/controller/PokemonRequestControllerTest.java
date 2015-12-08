@@ -22,7 +22,7 @@ public class PokemonRequestControllerTest {
 	@Test
 	public void testRequestPokemonById() {
 		for (int i = 0; i < 718; i++) {
-			pkmRequestController.requestPokemonById(i);
+			pkmRequestController.requestSelectedPokemonById(i);
 			assertEquals(pkmRequestController.getMakeType(), MakeType.JSON_DATA);
 			assertEquals(pkmRequestController.getHttpRequest().getUrl(), "http://pokeapi.co/api/v1/pokemon/" + i);
 		}

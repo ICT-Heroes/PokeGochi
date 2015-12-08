@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import oop.game.assets.Assets;
 import oop.game.assets.GameInfo;
+import oop.game.controller.PokemonRequestController;
 import oop.game.model.Pokemon;
 import oop.game.model.Type;
 import oop.game.pokegochi.PokeGochi;
@@ -33,9 +34,10 @@ public class MonsterBookStage extends Stage {
 	private TextButton nameButton, evolutionButton, typeButton, heightButton, weightButton;
 	private Vector2 spritePosition;
 	private float angle;
+	private PokemonRequestController pkmRequestController;
 
 	public void act(float delta) {
-		if (gameInfo.getSelectedPokemonSprite() != null) {
+		if (gameInfo.getSearchedPokemonSprite() != null) {
 			moveImage();
 			makeSpriteImage(spritePosition.x, spritePosition.y);
 		}
@@ -50,11 +52,14 @@ public class MonsterBookStage extends Stage {
 	public MonsterBookStage(PokeGochi game, GameInfo gameInfo) {
 		this.game = game;
 		this.gameInfo = gameInfo;
+		this.pkmRequestController = new PokemonRequestController(gameInfo);
 		frameTable = new Stack();
 		frameTable.setWidth(Gdx.graphics.getWidth() / 2);
 		frameTable.setHeight(Gdx.graphics.getHeight());
 		spritePosition = new Vector2(35, 220);
-		makeSpriteImage(spritePosition.x, spritePosition.y);
+		if (gameInfo.getSearchedPokemonSprite() != null) {
+			makeSpriteImage(spritePosition.x, spritePosition.y);
+		}
 		makeBookTable();
 		showBookTable();
 
@@ -92,6 +97,23 @@ public class MonsterBookStage extends Stage {
 		bookTable.add(evolutionButton).width(350).height(80);
 		evolutionButton.getLabel().setWrap(true);
 		bookTable.add(escapeButton);
+		leftArrowButton.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				if (gameInfo.getSearchedPokemonInfo().getNational_id() > 1) {
+					pkmRequestController.searchPokemonById(gameInfo.getSearchedPokemonInfo().getNational_id() - 1);
+				}
+
+			}
+		});
+
+		rightArrowButton.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				if (gameInfo.getSearchedPokemonInfo().getNational_id() < 718) {
+					pkmRequestController.searchPokemonById(gameInfo.getSearchedPokemonInfo().getNational_id() + 1);
+				}
+			}
+		});
+
 		escapeButton.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				game.setScreen(new MainScreen(game));
@@ -102,7 +124,7 @@ public class MonsterBookStage extends Stage {
 	}
 
 	private void makeSpriteImage(float x, float y) {
-		texture = gameInfo.getSelectedPokemonSprite();
+		texture = gameInfo.getSearchedPokemonSprite();
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
 		batch.draw(texture, x, y, 300, 300);
@@ -110,7 +132,7 @@ public class MonsterBookStage extends Stage {
 	}
 
 	private void showBookTable() {
-		Pokemon pokemon = gameInfo.getSelectedPokemonInfo();
+		Pokemon pokemon = gameInfo.getSearchedPokemonInfo();
 		if (pokemon != null) {
 			nameButton.getLabel().setFontScale(0.7f);
 			typeButton.getLabel().setFontScale(0.7f);
