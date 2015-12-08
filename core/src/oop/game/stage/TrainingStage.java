@@ -80,8 +80,8 @@ public class TrainingStage extends Stage {
 		spritePosition = new Vector2(0, 300);
 		angle = 0;
 		count = 0;
-		randomrate = (int)(Math.random() * 10);
-		
+		randomrate = (int) (Math.random() * 10);
+
 		makeButtons();
 		if (gameInfo.getFightPokemonSprite() != null) {
 			makeFightImage(spritePosition.x, spritePosition.y);
@@ -188,7 +188,7 @@ public class TrainingStage extends Stage {
 			heightButton.getLabel().setFontScale(0.7f);
 			winRateButton.getLabel().setFontScale(0.7f);
 
-			String name = pokemon.getNational_id() + " " + pokemon.getName();
+			String name = pokemon.getName();
 			nameButton.setText(name);
 			String type = getType(pokemon);
 			typeButton.setText(type);
@@ -196,25 +196,27 @@ public class TrainingStage extends Stage {
 			heightButton.setText("Height : " + (float) (Math.round(height * 100 * height)) / (1000 * height) + "m");
 			int weight = Integer.parseInt(pokemon.getWeight());
 			weightButton.setText("Weight : " + (float) (Math.round(weight * 10 * weight)) / (100 * weight) + "kg");
-			
+
 			mAttack = gameInfo.getSelectedPokemonInfo().getAttack();
 			mDefense = gameInfo.getSelectedPokemonInfo().getDefense();
 			eAttack = gameInfo.getFightPokemonInfo().getAttack();
 			eDefense = gameInfo.getFightPokemonInfo().getAttack();
-			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			// 내 포켓몬과 상대 포켓몬의 Type에 따른 weakness, no effect, ineffective, supereffective값 필요//
-			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			
+			// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// 내 포켓몬과 상대 포켓몬의 Type에 따른 weakness, no effect, ineffective,
+			// supereffective값 필요//
+			// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 			winrate = (mAttack - eDefense);
 			looserate = (eAttack - mDefense);
-			
-			if(winrate >= looserate){
+
+			if (winrate >= looserate) {
 				win = true;
 				winRateButton.setText("Advantageous");
-			}
-			else {
-				if(randomrate > 7) win = true;
-				else win = false;
+			} else {
+				if (randomrate > 7)
+					win = true;
+				else
+					win = false;
 				winRateButton.setText("Disadvantageous");
 			}
 

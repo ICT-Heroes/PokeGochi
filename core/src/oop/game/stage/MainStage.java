@@ -34,8 +34,8 @@ public class MainStage extends Stage {
 	private PokeGochi game;
 	private Vector2 spritePosition;
 	private float angle;
-	private int dirty, food;
-	private boolean feed;
+	private int dirty, food, dirtyTime;
+	private boolean feed, alreadyDirt;
 
 	@Override
 	public void act() {
@@ -43,40 +43,39 @@ public class MainStage extends Stage {
 			label.setText(gameInfo.getSelectedPokemonInfo().getName());
 		}
 		if (gameInfo.getSelectedPokemonSprite() != null) {
-			if (dirty > 300) {
+			if (isDirt()) {
 				// 일정 시간 지나면 dirt 생성
 				poopImage = new Image(new Texture(Gdx.files.internal("poop.png")));
-				poopImage.setScale(0.15f, 0.15f);
+				poopImage.setScale(0.3f, 0.3f);
 				poopTable.add(poopImage);
-				poopTable.center().bottom().padLeft(400).padBottom(250);
+				poopTable.center().bottom().padLeft(500).padBottom(250);
 				frameTable.add(poopTable);
-			}
-			else
+				alreadyDirt = true;
+			} else {
 				dirty++;
-			
-			if(feed) {
+			}
+
+			if (feed) {
 				food++;
-				dirty--;
-				
-				if(food > 100) {
+				if (food > 100) {
 					meat3.clear();
-					
-					if(food>150) {
+
+					if (food > 150) {
 						meat2.clear();
-						
-						if(food>200) {
+
+						if (food > 200) {
 							meat1.clear();
 						}
 					}
 				}
-				
-				if(food > 250) {
+
+				if (food > 250) {
 					foodTable.clear();
 					feed = false;
 					food = 0;
 				}
 			}
-			
+
 			moveImage();
 			drawSprite(spritePosition.x, spritePosition.y);
 		}
@@ -85,6 +84,18 @@ public class MainStage extends Stage {
 	private void moveImage() {
 		angle += 0.05f;
 		spritePosition.x = (float) (190 + 30 * Math.sin(angle));
+	}
+
+	private boolean isDirt() {
+		if (!alreadyDirt) {
+			if (dirty > 300) {
+				if (!feed) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private void drawSprite(float x, float y) {
@@ -186,6 +197,7 @@ public class MainStage extends Stage {
 	}
 
 	private void cleanPokemon() {
+		alreadyDirt = false;
 		dirty = 0;
 		poopTable.clear();
 	}
