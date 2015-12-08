@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import oop.game.assets.Assets;
 import oop.game.assets.GameInfo;
+import oop.game.controller.PokemonRequestController;
 import oop.game.model.Pokemon;
 import oop.game.model.Type;
 import oop.game.pokegochi.PokeGochi;
@@ -23,7 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class TrainingStage extends Stage {
 	private PokeGochi game;
@@ -31,8 +31,8 @@ public class TrainingStage extends Stage {
 	private Stack trainFrameTable, bookFrameTable;
 	private Table bookTable, topTable, buttonTable;
 	private Texture texture;
-	private ImageButton escapeButton, leftArrowButton, rightArrowButton;
-	private TextButton nameButton, winRateButton, typeButton, heightButton, weightButton;
+	private ImageButton leftArrowButton, rightArrowButton;
+	private TextButton nameButton, enemyButton, winRateButton, typeButton, heightButton, weightButton;
 	private Vector2 spritePosition;
 	private Texture character, fightPokemon;
 	private TextButton textButton[];
@@ -42,13 +42,16 @@ public class TrainingStage extends Stage {
 	private boolean fight, win;
 	private float angle;
 	private final String[] textButtonName = {"싸워보자", "돌아갈래"};
+	private PokemonRequestController pkmRequestController;
 
 	public void act(float delta) {
 		if (gameInfo.getSelectedPokemonSprite() != null) {
 			if (fight) {
 				moveImage();
 			}
-			makeFightImage(spritePosition.x, spritePosition.y);
+			if (gameInfo.getFightPokemonSprite() != null) {
+				makeFightImage(spritePosition.x, spritePosition.y);
+			}
 			showBookTable();
 		}
 
@@ -67,7 +70,8 @@ public class TrainingStage extends Stage {
 	public TrainingStage(final PokeGochi game, GameInfo gameInfo) {
 		this.game = game;
 		this.gameInfo = gameInfo;
-		gameInfo.setFightPokemonId(fightNumber);
+		this.pkmRequestController = new PokemonRequestController(gameInfo);
+		createFightPokemon();
 		trainFrameTable = new Stack();
 
 		trainFrameTable.setWidth(Gdx.graphics.getWidth() / 2);
@@ -81,7 +85,9 @@ public class TrainingStage extends Stage {
 		angle = 0;
 		count = 0;
 		makeButtons();
-		makeFightImage(spritePosition.x, spritePosition.y);
+		if (gameInfo.getFightPokemonSprite() != null) {
+			makeFightImage(spritePosition.x, spritePosition.y);
+		}
 
 		makeSpriteImage(spritePosition.x, spritePosition.y);
 		makeBookTable();
@@ -89,6 +95,10 @@ public class TrainingStage extends Stage {
 
 		this.addActor(trainFrameTable);
 		this.addActor(bookFrameTable);
+	}
+
+	private void createFightPokemon() {
+		pkmRequestController.requestRandomEnemy();
 	}
 
 	private void makeButtons() {
@@ -115,43 +125,38 @@ public class TrainingStage extends Stage {
 
 	private void makeFightImage(float x, float y) {
 		TextureRegion character = new TextureRegion(gameInfo.getSelectedPokemonSprite());
-		TextureRegion fightPokemon = new TextureRegion(gameInfo.getSelectedPokemonSprite());
+		TextureRegion fightPokemon = new TextureRegion(gameInfo.getFightPokemonSprite());
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
 		if (count < 1500) {
-			batch.draw(character, 150 - x, y - 100, 200, 200);// , 300, 300, 1,
-			batch.draw(fightPokemon, x, y - 100, 200, 200);
+			batch.draw(fightPokemon, 150 - x, y - 100, 200, 200);// , 300, 300,
+																	// 1,
+			batch.draw(character, x, y - 100, 200, 200);
 		} // 1, 90);
 		else {
 			if (!win) { // loose
-				batch.draw(character, 150 - x, y - 110, 200, 200, 200, 200, 1, 1, count - 1500);
-				batch.draw(fightPokemon, x, y - 100, 200, 200);
+				batch.draw(fightPokemon, 150 - x, y - 110, 200, 200, 200, 200, 1, 1, count - 1500);
+				batch.draw(character, x, y - 100, 200, 200);
 			} else { // win
-				batch.draw(character, 150 - x, y - 100, 200, 200);
-				batch.draw(fightPokemon, x, y - 100, 200, 200, 200, 200, 1, 1, count - 1500);
+				batch.draw(fightPokemon, 150 - x, y - 100, 200, 200);
+				batch.draw(character, x, y - 100, 200, 200, 200, 200, 1, 1, count - 1500);
 			}
 		}
 		batch.end();
 	}
 
 	private void makeBookTable() {
-		escapeButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(Assets.uiCross)),
-				new TextureRegionDrawable(new TextureRegion(Assets.uiCrossDown)));
-		nameButton = new TextButton("", Assets.skin, "yellow");
-		typeButton = new TextButton("", Assets.skin, "yellow");
-		heightButton = new TextButton("", Assets.skin, "yellow");
-		weightButton = new TextButton("", Assets.skin, "yellow");
-		winRateButton = new TextButton("", Assets.skin, "yellow");
-		leftArrowButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(Assets.uiLeft)),
-				new TextureRegionDrawable(new TextureRegion(Assets.uiLeftDown)));
-		rightArrowButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(Assets.uiRight)),
-				new TextureRegionDrawable(new TextureRegion(Assets.uiRightDown)));
+		enemyButton = new TextButton("상대", Assets.skin, "red");
+		nameButton = new TextButton("", Assets.skin, "red");
+		typeButton = new TextButton("", Assets.skin, "red");
+		heightButton = new TextButton("", Assets.skin, "red");
+		weightButton = new TextButton("", Assets.skin, "red");
+		winRateButton = new TextButton("", Assets.skin, "red");
 
 		topTable = new Table();
 		topTable.left().top().padLeft(20).padTop(30);
-		topTable.add(leftArrowButton).width(50);
+		topTable.add(enemyButton).width(100);
 		topTable.add(nameButton).width(250);
-		topTable.add(rightArrowButton).width(50);
 
 		bookTable = new Table();
 		bookTable.left().top().padLeft(20).padTop(350);
@@ -171,13 +176,14 @@ public class TrainingStage extends Stage {
 		texture = gameInfo.getSelectedPokemonSprite();
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
-		batch.draw(texture, x, y, 200, 200);
+		batch.draw(texture, x, y, 400, 200);
 		batch.end();
 	}
 
 	private void showBookTable() {
 		Pokemon pokemon = gameInfo.getSelectedPokemonInfo();
 		if (pokemon != null) {
+			enemyButton.getLabel().setFontScale(0.7f);
 			nameButton.getLabel().setFontScale(0.7f);
 			typeButton.getLabel().setFontScale(0.7f);
 			weightButton.getLabel().setFontScale(0.7f);

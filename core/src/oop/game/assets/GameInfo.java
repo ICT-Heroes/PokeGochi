@@ -11,13 +11,12 @@ public class GameInfo {
 		MENU, MAIN;
 	}
 	private GameState gameState;
-	private Pokemon selectedPokemonInfo;
+	private Pokemon selectedPokemonInfo, fightPokemonInfo;
 	private Texture selectedPokemonSprite;
 	private Pokemon[] pokemonList;
 	private Texture[] pokemonSpriteList;
 	private Pokedex pokedex;
-	private int selectedPokemonId;
-	private int fightPokemonId;
+	private int selectedPokemonId, enemyPokemonId;
 	private Texture fightPokemonSprite;
 
 	public GameInfo() {
@@ -91,20 +90,28 @@ public class GameInfo {
 		this.selectedPokemonId = selectedPokemonId;
 	}
 
-	public int getFightPokemonId() {
-		return fightPokemonId;
-	}
-
-	public void setFightPokemonId(int fightPokemonId) {
-		this.fightPokemonId = fightPokemonId;
-	}
-
 	public Texture getFightPokemonSprite() {
 		return fightPokemonSprite;
 	}
 
 	public void setFightPokemonSprite(Texture fightPokemonSprite) {
 		this.fightPokemonSprite = fightPokemonSprite;
+	}
+
+	public Pokemon getFightPokemonInfo() {
+		return fightPokemonInfo;
+	}
+
+	public void setFightPokemonInfo(Pokemon fightPokemonInfo) {
+		this.fightPokemonInfo = fightPokemonInfo;
+	}
+
+	public int getEnemyPokemonId() {
+		return enemyPokemonId;
+	}
+
+	public void setEnemyPokemonId(int enemyPokemonId) {
+		this.enemyPokemonId = enemyPokemonId;
 	}
 
 }

@@ -1,5 +1,7 @@
 package oop.game.controller;
 
+import java.util.Random;
+
 import oop.game.assets.GameInfo;
 import oop.game.model.Pokedex;
 import oop.game.model.Pokemon;
@@ -14,7 +16,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class PokemonRequestController implements HttpResponseListener {
 	public enum MakeType {
-		POKEDEX, JSON_DATA, SPRITE_IMAGE;
+		POKEDEX, ENEMY_JSON_DATA, JSON_DATA, SPRITE_IMAGE, ENEMY_SPRITE_IMAGE;
 	}
 	public PokemonRequestController(GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
@@ -22,11 +24,26 @@ public class PokemonRequestController implements HttpResponseListener {
 	private GameInfo gameInfo;
 	private MakeType makeType;
 	private HttpRequest httpRequest;
-	private int spriteNumber;
+	private int spriteNumber, enemySpriteNumber;
 
 	public void requestPokemonById(int id) {
 		makeType = MakeType.JSON_DATA;
 		makeRequest("http://pokeapi.co/api/v1/pokemon/" + id);
+	}
+
+	public void requestRandomEnemy() {
+		makeType = MakeType.ENEMY_JSON_DATA;
+		Random random = new Random();
+		random.setSeed(System.currentTimeMillis());
+		int randomId = random.nextInt(718) + 1;
+		gameInfo.setEnemyPokemonId(randomId);
+		makeRequest("http://pokeapi.co/api/v1/pokemon/" + randomId);
+	}
+
+	public void requestEnemySpriteImageById(int id) {
+		makeType = MakeType.ENEMY_SPRITE_IMAGE;
+		enemySpriteNumber = id;
+		makeRequest("http://pokeapi.co/media/img/" + id + ".png");
 	}
 
 	public void requestPokedex() {
@@ -53,6 +70,16 @@ public class PokemonRequestController implements HttpResponseListener {
 		final String data;
 		synchronized (makeType) {
 			switch (makeType) {
+				case ENEMY_JSON_DATA :
+					data = httpResponse.getResultAsString();
+					Gdx.app.postRunnable(new Runnable() {
+						synchronized public void run() {
+							if (!data.equals("")) {
+								makeEnemyPokemon(data);
+							}
+						}
+					});
+					break;
 				case JSON_DATA :
 					data = httpResponse.getResultAsString();
 					Gdx.app.postRunnable(new Runnable() {
@@ -73,6 +100,16 @@ public class PokemonRequestController implements HttpResponseListener {
 						}
 					});
 					break;
+				case ENEMY_SPRITE_IMAGE :
+					final byte[] rawEnemyImageBytes = httpResponse.getResult();
+					Gdx.app.postRunnable(new Runnable() {
+						synchronized public void run() {
+							if (rawEnemyImageBytes.length > 0) {
+								makeEnemyPokemonSprite(rawEnemyImageBytes);
+							}
+						}
+					});
+					break;
 				case SPRITE_IMAGE :
 					final byte[] rawImageBytes = httpResponse.getResult();
 					Gdx.app.postRunnable(new Runnable() {
@@ -87,6 +124,15 @@ public class PokemonRequestController implements HttpResponseListener {
 		}
 
 	}
+	private void makeEnemyPokemonSprite(byte[] rawImageBytes) {
+		Gdx.app.log("PokemonRequestController", "SpriteNumber : " + spriteNumber);
+		Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
+		if (gameInfo.getPokemonSpriteList()[spriteNumber] == null) {
+			gameInfo.getPokemonSpriteList()[spriteNumber] = new Texture(pixmap);
+			gameInfo.setFightPokemonSprite(new Texture(pixmap));
+		}
+	}
+
 	private void makePokemonSprite(byte[] rawImageBytes) {
 		Gdx.app.log("PokemonRequestController", "SpriteNumber : " + spriteNumber);
 		Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
@@ -94,9 +140,17 @@ public class PokemonRequestController implements HttpResponseListener {
 			gameInfo.getPokemonSpriteList()[spriteNumber] = new Texture(pixmap);
 			gameInfo.setSelectedPokemonSprite(new Texture(pixmap));
 		}
-		// gameInfo.setSearchedPokemonSprite(new
-		// Texture(pixmap));
 	}
+
+	private void makeEnemyPokemon(String data) {
+		Pokemon pokemon = PokemonMakeController.makePokemon(data);
+		if (pokemon != null) {
+			gameInfo.setFightPokemonInfo(pokemon);
+			Gdx.app.log("PokemonRequestController", "pokemon (" + pokemon.getNational_id() + ") is created");
+		}
+		requestEnemySpriteImageById(pokemon.getNational_id());
+	}
+
 	private void makePokemon(String data) {
 		Pokemon pokemon = PokemonMakeController.makePokemon(data);
 		if (pokemon != null) {
