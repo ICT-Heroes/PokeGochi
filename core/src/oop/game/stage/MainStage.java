@@ -42,12 +42,7 @@ public class MainStage extends Stage {
 		if (gameInfo.getSelectedPokemonSprite() != null) {
 			if (dirty > 300) {
 				// 일정 시간 지나면 dirt 생성
-				tmplabel = new Label("(똥)", Assets.skin);
-				tmplabel.scaleBy(3.0f);
-				Table labelTable = new Table();
-				labelTable.add(tmplabel);
-				labelTable.center().bottom().padLeft(580).padBottom(400);
-				frameTable.add(labelTable);
+				tmplabel.setVisible(true);
 			}
 			dirty++;
 			moveImage();
@@ -83,9 +78,16 @@ public class MainStage extends Stage {
 		frameTable = new Stack();
 		frameTable.setWidth(Gdx.graphics.getWidth());
 		frameTable.setHeight(Gdx.graphics.getHeight());
+		tmplabel = new Label("(똥)", Assets.skin);
+		tmplabel.scaleBy(3.0f);
+		Table labelTable = new Table();
+		labelTable.add(tmplabel);
+		labelTable.center().bottom().padLeft(250).padBottom(250);
+		tmplabel.setVisible(false);
 
 		makeField();
 		makeButtons();
+		frameTable.add(labelTable);
 		frameTable.add(fieldTable);
 		frameTable.add(buttonTable);
 
@@ -133,6 +135,7 @@ public class MainStage extends Stage {
 	}
 
 	private void cleanPokemon() {
-
+		dirty = 0;
+		tmplabel.setVisible(false);
 	}
 }
