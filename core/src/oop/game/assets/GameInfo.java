@@ -1,6 +1,7 @@
 package oop.game.assets;
 
 import oop.game.controller.PokemonRequestController;
+import oop.game.controller.PokemonRequestController.MakeType;
 import oop.game.model.Pokedex;
 import oop.game.model.Pokemon;
 
@@ -11,13 +12,12 @@ public class GameInfo {
 		MENU, MAIN;
 	}
 	private GameState gameState;
-	private Pokemon selectedPokemonInfo, fightPokemonInfo;
-	private Texture selectedPokemonSprite;
+	private Pokemon selectedPokemonInfo, searchedPokemonInfo, fightPokemonInfo;
+	private Texture selectedPokemonSprite, searchedPokemonSprite, fightPokemonSprite;
 	private Pokemon[] pokemonList;
 	private Texture[] pokemonSpriteList;
 	private Pokedex pokedex;
-	private int selectedPokemonId, enemyPokemonId;
-	private Texture fightPokemonSprite;
+	private int selectedPokemonId, enemyPokemonId, searchedPokemonId;
 
 	public GameInfo() {
 		setPokemonList(new Pokemon[718]);
@@ -34,7 +34,7 @@ public class GameInfo {
 
 	public void loadAllPokemon(PokemonRequestController pkmRequestController) {
 		for (int i = 0; i < 15; i++) {
-			pkmRequestController.requestPokemonById(i);
+			pkmRequestController.requestPokemonById(i, MakeType.JSON_DATA);
 		}
 	}
 
@@ -112,6 +112,30 @@ public class GameInfo {
 
 	public void setEnemyPokemonId(int enemyPokemonId) {
 		this.enemyPokemonId = enemyPokemonId;
+	}
+
+	public Pokemon getSearchedPokemonInfo() {
+		return searchedPokemonInfo;
+	}
+
+	public void setSearchedPokemonInfo(Pokemon searchedPokemonInfo) {
+		this.searchedPokemonInfo = searchedPokemonInfo;
+	}
+
+	public Texture getSearchedPokemonSprite() {
+		return searchedPokemonSprite;
+	}
+
+	public void setSearchedPokemonSprite(Texture searchedPokemonSprite) {
+		this.searchedPokemonSprite = searchedPokemonSprite;
+	}
+
+	public int getSearchedPokemonId() {
+		return searchedPokemonId;
+	}
+
+	public void setSearchedPokemonId(int searchedPokemonId) {
+		this.searchedPokemonId = searchedPokemonId;
 	}
 
 }
