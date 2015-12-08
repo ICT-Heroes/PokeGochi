@@ -68,7 +68,6 @@ public class PokemonRequestController implements HttpResponseListener {
 	public void requestSpriteImageById(int id) {
 		makeType = MakeType.SPRITE_IMAGE;
 		spriteNumber = id;
-		gameInfo.setSearchedPokemonId(id);
 		makeRequest("http://pokeapi.co/media/img/" + spriteNumber + ".png");
 	}
 
