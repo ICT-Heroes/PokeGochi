@@ -3,6 +3,7 @@ package oop.game.stage;
 import oop.game.assets.Assets;
 import oop.game.assets.GameInfo;
 import oop.game.pokegochi.PokeGochi;
+import oop.game.screen.CreditScreen;
 import oop.game.screen.MainScreen;
 import oop.game.screen.SelectScreen;
 
@@ -68,6 +69,12 @@ public class MenuStage extends Stage {
 						game.setScreen(new MainScreen(game));
 					}
 				}
+			}
+		});
+
+		textButton[2].addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				game.setScreen(new CreditScreen(game));
 			}
 		});
 

@@ -18,7 +18,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -31,17 +30,15 @@ public class TrainingStage extends Stage {
 	private Stack trainFrameTable, bookFrameTable;
 	private Table bookTable, topTable, buttonTable;
 	private Texture texture;
-	private ImageButton leftArrowButton, rightArrowButton;
+	private Label winOrLoseLabel;
 	private TextButton nameButton, enemyButton, winRateButton, typeButton, heightButton, weightButton;
 	private Vector2 spritePosition;
 	private TextureRegion character, fightPokemon;
 	private TextButton textButton[];
-	private Label winrateLabel;
-	private int count, winrate;
-	private final int fightNumber = 5;
-	private boolean fight, win;
+	private int count, winrate, looserate, mAttack, mDefense, eAttack, eDefense, randomrate;
+	private boolean fight, win, endGame;
 	private float angle;
-	private final String[] textButtonName = {"싸워보자", "돌아갈래"};
+	private final String[] textButtonName = {"싸워보자", "도망가자"};
 	private PokemonRequestController pkmRequestController;
 
 	public void act(float delta) {
@@ -55,16 +52,43 @@ public class TrainingStage extends Stage {
 			showBookTable();
 		}
 
+		if (gameInfo.getFightPokemonSprite() != null) {
+			texture = gameInfo.getFightPokemonSprite();
+			SpriteBatch batch = new SpriteBatch();
+			batch.begin();
+			batch.draw(texture, 400, 200, 300, 300);
+			batch.end();
+		}
+		if (endGame) {
+			if (win) {
+				winOrLoseLabel = new Label("You win!", Assets.skin);
+				winOrLoseLabel.setScale(0.7f);
+				Stack labelStack = new Stack();
+				labelStack.setPosition(40, 100);
+				labelStack.add(winOrLoseLabel);
+				this.addActor(labelStack);
+			} else {
+				winOrLoseLabel = new Label("You Lose!", Assets.skin);
+				winOrLoseLabel.setScale(0.7f);
+				Stack labelStack = new Stack();
+				labelStack.setPosition(40, 100);
+				labelStack.add(winOrLoseLabel);
+				this.addActor(labelStack);
+			}
+		}
+
 	}
 
 	private void moveImage() {
 		angle += 0.1f;
 		if (angle > 3.14f)
 			angle = 0;
-		if (count < 1500)
+		if (count < 900)
 			spritePosition.x = (float) (100 + 30 * Math.sin(angle));
-		if (count < 1570)
+		if (count < 970)
 			count += 10;
+		else
+			textButton[1].setText("돌아가자");
 	}
 
 	public TrainingStage(final PokeGochi game, GameInfo gameInfo) {
@@ -84,6 +108,8 @@ public class TrainingStage extends Stage {
 		spritePosition = new Vector2(0, 300);
 		angle = 0;
 		count = 0;
+		randomrate = (int) (Math.random() * 10);
+
 		makeButtons();
 		if (gameInfo.getFightPokemonSprite() != null) {
 			makeFightImage(spritePosition.x, spritePosition.y);
@@ -128,18 +154,19 @@ public class TrainingStage extends Stage {
 		fightPokemon = new TextureRegion(gameInfo.getFightPokemonSprite());
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
-		if (count < 1500) {
-			batch.draw(fightPokemon, 150 - x, y - 100, 200, 200);// , 300, 300,
-																	// 1,
+		if (count < 900) {
+			batch.draw(fightPokemon, 150 - x, y - 100, 200, 200);
 			batch.draw(character, x, y - 100, 200, 200);
 		} // 1, 90);
 		else {
 			if (!win) { // loose
-				batch.draw(fightPokemon, 150 - x, y - 110, 200, 200, 200, 200, 1, 1, count - 1500);
-				batch.draw(character, x, y - 100, 200, 200);
-			} else { // win
 				batch.draw(fightPokemon, 150 - x, y - 100, 200, 200);
-				batch.draw(character, x, y - 100, 200, 200, 200, 200, 1, 1, count - 1500);
+				batch.draw(character, x, y - 100, 200, 200, 200, 200, 1, 1, count - 900);
+				endGame = true;
+			} else { // win
+				batch.draw(fightPokemon, 150 - x, y - 110, 200, 200, 200, 200, 1, 1, count - 900);
+				batch.draw(character, x, y - 100, 200, 200);
+				endGame = true;
 			}
 		}
 		batch.end();
@@ -191,7 +218,7 @@ public class TrainingStage extends Stage {
 			heightButton.getLabel().setFontScale(0.7f);
 			winRateButton.getLabel().setFontScale(0.7f);
 
-			String name = pokemon.getNational_id() + " " + pokemon.getName();
+			String name = pokemon.getName();
 			nameButton.setText(name);
 			String type = getType(pokemon);
 			typeButton.setText(type);
@@ -200,7 +227,29 @@ public class TrainingStage extends Stage {
 			int weight = Integer.parseInt(pokemon.getWeight());
 			weightButton.setText("Weight : " + (float) (Math.round(weight * 10 * weight)) / (100 * weight) + "kg");
 
-			winRateButton.setText("WinRate : " + winrate + "%");
+			mAttack = gameInfo.getSelectedPokemonInfo().getAttack();
+			mDefense = gameInfo.getSelectedPokemonInfo().getDefense();
+			eAttack = gameInfo.getFightPokemonInfo().getAttack();
+			eDefense = gameInfo.getFightPokemonInfo().getAttack();
+			// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// 내 포켓몬과 상대 포켓몬의 Type에 따른 weakness, no effect, ineffective,
+			// supereffective값 필요//
+			// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+			winrate = (mAttack - eDefense);
+			looserate = (eAttack - mDefense);
+
+			if (winrate >= looserate) {
+				win = true;
+				winRateButton.setText("Advantageous");
+			} else {
+				if (randomrate > 7)
+					win = true;
+				else
+					win = false;
+				winRateButton.setText("Disadvantageous");
+			}
+
 		}
 	}
 	private String getType(Pokemon pokemon) {

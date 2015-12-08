@@ -24,17 +24,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class MainStage extends Stage {
 	private final String[] textButtonName = {"먹이주기", "수련하기", "도감보기", "똥치우기"};
 	private Stack frameTable;
-	private Table fieldTable, buttonTable, poopTable;
+	private Table fieldTable, buttonTable, poopTable, foodTable, meat1, meat2, meat3;
 	private TextButton[] textButton;
 	private PokemonRequestController pokemonRequestController;
 	private Texture texture;
-	private Image poopImage;
-	private Label label, tmplabel;
+	private Image poopImage, foodImage, food1, food2, food3;
+	private Label label;
 	private GameInfo gameInfo;
 	private PokeGochi game;
 	private Vector2 spritePosition;
 	private float angle;
-	private int dirty;
+	private int dirty, food, dirtyTime;
+	private boolean feed, alreadyDirt;
 
 	@Override
 	public void act() {
@@ -42,15 +43,39 @@ public class MainStage extends Stage {
 			label.setText(gameInfo.getSelectedPokemonInfo().getName());
 		}
 		if (gameInfo.getSelectedPokemonSprite() != null) {
-			if (dirty > 300) {
+			if (isDirt()) {
 				// 일정 시간 지나면 dirt 생성
 				poopImage = new Image(new Texture(Gdx.files.internal("poop.png")));
+				poopImage.setScale(0.3f, 0.3f);
 				poopTable.add(poopImage);
-				poopTable.center().bottom().padLeft(580).padBottom(400);
+				poopTable.center().bottom().padLeft(500).padBottom(250);
 				frameTable.add(poopTable);
-				dirty = 0;
+				alreadyDirt = true;
+			} else {
+				dirty++;
 			}
-			dirty++;
+
+			if (feed) {
+				food++;
+				if (food > 100) {
+					meat3.clear();
+
+					if (food > 150) {
+						meat2.clear();
+
+						if (food > 200) {
+							meat1.clear();
+						}
+					}
+				}
+
+				if (food > 250) {
+					foodTable.clear();
+					feed = false;
+					food = 0;
+				}
+			}
+
 			moveImage();
 			drawSprite(spritePosition.x, spritePosition.y);
 		}
@@ -59,6 +84,18 @@ public class MainStage extends Stage {
 	private void moveImage() {
 		angle += 0.05f;
 		spritePosition.x = (float) (190 + 30 * Math.sin(angle));
+	}
+
+	private boolean isDirt() {
+		if (!alreadyDirt) {
+			if (dirty > 300) {
+				if (!feed) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private void drawSprite(float x, float y) {
@@ -76,25 +113,24 @@ public class MainStage extends Stage {
 		spritePosition = new Vector2(190, 190);
 		angle = 0;
 		dirty = 0;
+		food = 0;
+		feed = false;
 		pokemonRequestController = new PokemonRequestController(gameInfo);
 		pokemonRequestController.requestSelectedPokemonById(gameInfo.getSelectedPokemonId());
 		frameTable = new Stack();
 		fieldTable = new Table();
 		buttonTable = new Table();
 		poopTable = new Table();
+		foodTable = new Table();
+		meat1 = new Table();
+		meat2 = new Table();
+		meat3 = new Table();
 		frameTable = new Stack();
 		frameTable.setWidth(Gdx.graphics.getWidth());
 		frameTable.setHeight(Gdx.graphics.getHeight());
-		tmplabel = new Label("(똥)", Assets.skin);
-		tmplabel.scaleBy(3.0f);
-		Table labelTable = new Table();
-		labelTable.add(tmplabel);
-		labelTable.center().bottom().padLeft(250).padBottom(250);
-		tmplabel.setVisible(false);
 
 		makeField();
 		makeButtons();
-		frameTable.add(labelTable);
 		frameTable.add(fieldTable);
 		frameTable.add(buttonTable);
 
@@ -110,6 +146,7 @@ public class MainStage extends Stage {
 		}
 		textButton[0].addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
+				feed = true;
 				feedPokemon();
 			}
 		});
@@ -137,10 +174,31 @@ public class MainStage extends Stage {
 	}
 
 	private void feedPokemon() {
-
+		foodImage = new Image(new Texture(Gdx.files.internal("food_bowl.png")));
+		food1 = new Image(new Texture(Gdx.files.internal("meatball.png")));
+		food2 = new Image(new Texture(Gdx.files.internal("meatball.png")));
+		food3 = new Image(new Texture(Gdx.files.internal("meatball.png")));
+		foodImage.setScale(0.2f, 0.2f);
+		food1.setScale(0.3f, 0.3f);
+		food2.setScale(0.3f, 0.3f);
+		food3.setScale(0.3f, 0.3f);
+		foodTable.add(foodImage);
+		foodTable.center().bottom().padLeft(200).padBottom(250);
+		meat1.add(food1);
+		meat1.center().bottom().padLeft(-70).padBottom(260);
+		meat2.add(food2);
+		meat2.center().bottom().padLeft(10).padBottom(260);
+		meat3.add(food3);
+		meat3.center().bottom().padLeft(-10).padBottom(275);
+		frameTable.add(foodTable);
+		frameTable.add(meat1);
+		frameTable.add(meat2);
+		frameTable.add(meat3);
 	}
 
 	private void cleanPokemon() {
+		alreadyDirt = false;
+		dirty = 0;
 		poopTable.clear();
 	}
 }

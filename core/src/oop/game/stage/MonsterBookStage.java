@@ -27,11 +27,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class MonsterBookStage extends Stage {
 	private PokeGochi game;
 	private GameInfo gameInfo;
-	private Stack frameTable;
-	private Table bookTable, topTable;
+	private Stack leftFrameTable, rightFrameTable;
+	private Table bookLeftTable, bookRightTable, topTable;
 	private Texture texture;
 	private ImageButton escapeButton, leftArrowButton, rightArrowButton;
-	private TextButton nameButton, evolutionButton, typeButton, heightButton, weightButton;
+	private TextButton attackButton, defenseButton, healthPointButton, nameButton, evolutionButton, typeButton,
+			heightButton, weightButton;
 	private Vector2 spritePosition;
 	private float angle;
 	private int waitFlagCount;
@@ -47,7 +48,8 @@ public class MonsterBookStage extends Stage {
 		if (waitFlagCount > 300) {
 			waitFlag = true;
 		}
-		showBookTable();
+		showBookLeftTable();
+		showBookRightTable();
 	}
 
 	private void moveImage() {
@@ -61,20 +63,57 @@ public class MonsterBookStage extends Stage {
 		this.pkmRequestController = new PokemonRequestController(gameInfo);
 		waitFlag = true;
 		waitFlagCount = 0;
-		frameTable = new Stack();
-		frameTable.setWidth(Gdx.graphics.getWidth() / 2);
-		frameTable.setHeight(Gdx.graphics.getHeight());
+		leftFrameTable = new Stack();
+		rightFrameTable = new Stack();
+		leftFrameTable.setWidth(Gdx.graphics.getWidth() / 2);
+		leftFrameTable.setHeight(Gdx.graphics.getHeight());
+		rightFrameTable.setWidth(Gdx.graphics.getWidth() / 2);
+		rightFrameTable.setHeight(Gdx.graphics.getHeight());
 		spritePosition = new Vector2(35, 220);
 		if (gameInfo.getSearchedPokemonSprite() != null) {
 			makeSpriteImage(spritePosition.x, spritePosition.y);
 		}
-		makeBookTable();
-		showBookTable();
+		makeBookLeftTable();
+		makeBookRightTable();
+		showBookLeftTable();
+		showBookRightTable();
 
-		this.addActor(frameTable);
+		this.addActor(leftFrameTable);
+		this.addActor(rightFrameTable);
 	}
 
-	private void makeBookTable() {
+	private void makeBookRightTable() {
+		attackButton = new TextButton("", Assets.skin, "yellow");
+		defenseButton = new TextButton("", Assets.skin, "yellow");
+		healthPointButton = new TextButton("", Assets.skin, "yellow");
+		bookRightTable = new Table();
+		bookRightTable.left().top().padLeft(20).padTop(30);
+		bookRightTable.add(attackButton).width(300);
+		bookRightTable.row();
+		bookRightTable.add(defenseButton).width(300);
+		bookRightTable.row();
+		bookRightTable.add(healthPointButton).width(300);
+		rightFrameTable.setPosition(360, 0);
+		rightFrameTable.add(bookRightTable);
+	}
+
+	private void showBookRightTable() {
+		Pokemon pokemon = gameInfo.getSearchedPokemonInfo();
+		if (pokemon != null) {
+			attackButton.getLabel().setFontScale(0.7f);
+			defenseButton.getLabel().setFontScale(0.7f);
+			healthPointButton.getLabel().setFontScale(0.7f);
+
+			int attack = pokemon.getAttack();
+			attackButton.setText("Attack : " + String.valueOf(attack));
+			int defense = pokemon.getDefense();
+			defenseButton.setText("Defense : " + String.valueOf(defense));
+			int healthPoint = pokemon.getHp();
+			healthPointButton.setText("HealthPoint : " + String.valueOf(healthPoint));
+		}
+	}
+
+	private void makeBookLeftTable() {
 
 		escapeButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(Assets.uiCross)),
 				new TextureRegionDrawable(new TextureRegion(Assets.uiCrossDown)));
@@ -94,17 +133,17 @@ public class MonsterBookStage extends Stage {
 		topTable.add(nameButton).width(250);
 		topTable.add(rightArrowButton).width(50);
 
-		bookTable = new Table();
-		bookTable.left().top().padLeft(20).padTop(350);
-		bookTable.add(typeButton).width(350);;
-		bookTable.row();
-		bookTable.add(heightButton).width(350);
-		bookTable.row();
-		bookTable.add(weightButton).width(350);
-		bookTable.row();
-		bookTable.add(evolutionButton).width(350).height(80);
+		bookLeftTable = new Table();
+		bookLeftTable.left().top().padLeft(20).padTop(350);
+		bookLeftTable.add(typeButton).width(350);;
+		bookLeftTable.row();
+		bookLeftTable.add(heightButton).width(350);
+		bookLeftTable.row();
+		bookLeftTable.add(weightButton).width(350);
+		bookLeftTable.row();
+		bookLeftTable.add(evolutionButton).width(350).height(80);
 		evolutionButton.getLabel().setWrap(true);
-		bookTable.add(escapeButton);
+		bookLeftTable.add(escapeButton);
 		leftArrowButton.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				if (gameInfo.getSearchedPokemonInfo().getNational_id() > 1) {
@@ -134,8 +173,8 @@ public class MonsterBookStage extends Stage {
 				game.setScreen(new MainScreen(game));
 			}
 		});
-		frameTable.add(bookTable);
-		frameTable.add(topTable);
+		leftFrameTable.add(bookLeftTable);
+		leftFrameTable.add(topTable);
 	}
 
 	private void makeSpriteImage(float x, float y) {
@@ -146,7 +185,7 @@ public class MonsterBookStage extends Stage {
 		batch.end();
 	}
 
-	private void showBookTable() {
+	private void showBookLeftTable() {
 		Pokemon pokemon = gameInfo.getSearchedPokemonInfo();
 		if (pokemon != null) {
 			nameButton.getLabel().setFontScale(0.7f);
