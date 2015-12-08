@@ -85,9 +85,16 @@ public class MainStage extends Stage {
 		frameTable = new Stack();
 		frameTable.setWidth(Gdx.graphics.getWidth());
 		frameTable.setHeight(Gdx.graphics.getHeight());
+		tmplabel = new Label("(똥)", Assets.skin);
+		tmplabel.scaleBy(3.0f);
+		Table labelTable = new Table();
+		labelTable.add(tmplabel);
+		labelTable.center().bottom().padLeft(250).padBottom(250);
+		tmplabel.setVisible(false);
 
 		makeField();
 		makeButtons();
+		frameTable.add(labelTable);
 		frameTable.add(fieldTable);
 		frameTable.add(buttonTable);
 
@@ -118,8 +125,7 @@ public class MainStage extends Stage {
 		});
 		textButton[3].addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				if (dirty > 300)
-					cleanPokemon();
+				cleanPokemon();
 			}
 		});
 		buttonTable.center().bottom().padBottom(10);
@@ -135,6 +141,6 @@ public class MainStage extends Stage {
 	}
 
 	private void cleanPokemon() {
-
+		poopTable.clear();
 	}
 }
