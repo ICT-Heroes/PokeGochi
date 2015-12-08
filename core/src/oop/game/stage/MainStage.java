@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -23,10 +24,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class MainStage extends Stage {
 	private final String[] textButtonName = {"먹이주기", "수련하기", "도감보기", "똥치우기"};
 	private Stack frameTable;
-	private Table fieldTable, buttonTable, labelTable;
+	private Table fieldTable, buttonTable, poopTable;
 	private TextButton[] textButton;
 	private PokemonRequestController pokemonRequestController;
 	private Texture texture;
+	private Image poopImage;
 	private Label label, tmplabel;
 	private GameInfo gameInfo;
 	private PokeGochi game;
@@ -42,12 +44,11 @@ public class MainStage extends Stage {
 		if (gameInfo.getSelectedPokemonSprite() != null) {
 			if (dirty > 300) {
 				// 일정 시간 지나면 dirt 생성
-				tmplabel = new Label("(똥)", Assets.skin);
-				tmplabel.scaleBy(3.0f);
-				Table labelTable = new Table();
-				labelTable.add(tmplabel);
-				labelTable.center().bottom().padLeft(580).padBottom(400);
-				frameTable.add(labelTable);
+				poopImage = new Image(new Texture(Gdx.files.internal("poop.png")));
+				poopTable.add(poopImage);
+				poopTable.center().bottom().padLeft(580).padBottom(400);
+				frameTable.add(poopTable);
+				dirty = 0;
 			}
 			dirty++;
 			moveImage();
@@ -80,12 +81,20 @@ public class MainStage extends Stage {
 		frameTable = new Stack();
 		fieldTable = new Table();
 		buttonTable = new Table();
+		poopTable = new Table();
 		frameTable = new Stack();
 		frameTable.setWidth(Gdx.graphics.getWidth());
 		frameTable.setHeight(Gdx.graphics.getHeight());
+		tmplabel = new Label("(똥)", Assets.skin);
+		tmplabel.scaleBy(3.0f);
+		Table labelTable = new Table();
+		labelTable.add(tmplabel);
+		labelTable.center().bottom().padLeft(250).padBottom(250);
+		tmplabel.setVisible(false);
 
 		makeField();
 		makeButtons();
+		frameTable.add(labelTable);
 		frameTable.add(fieldTable);
 		frameTable.add(buttonTable);
 
@@ -116,8 +125,7 @@ public class MainStage extends Stage {
 		});
 		textButton[3].addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
-				if (dirty > 300)
-					cleanPokemon();
+				cleanPokemon();
 			}
 		});
 		buttonTable.center().bottom().padBottom(10);
@@ -133,6 +141,6 @@ public class MainStage extends Stage {
 	}
 
 	private void cleanPokemon() {
-
+		poopTable.clear();
 	}
 }
