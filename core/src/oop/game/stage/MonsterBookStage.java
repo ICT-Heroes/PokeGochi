@@ -34,12 +34,18 @@ public class MonsterBookStage extends Stage {
 	private TextButton nameButton, evolutionButton, typeButton, heightButton, weightButton;
 	private Vector2 spritePosition;
 	private float angle;
+	private int waitFlagCount;
 	private PokemonRequestController pkmRequestController;
+	private boolean waitFlag;
 
 	public void act(float delta) {
 		if (gameInfo.getSearchedPokemonSprite() != null) {
 			moveImage();
 			makeSpriteImage(spritePosition.x, spritePosition.y);
+		}
+		waitFlagCount++;
+		if (waitFlagCount > 300) {
+			waitFlag = true;
 		}
 		showBookTable();
 	}
@@ -53,6 +59,8 @@ public class MonsterBookStage extends Stage {
 		this.game = game;
 		this.gameInfo = gameInfo;
 		this.pkmRequestController = new PokemonRequestController(gameInfo);
+		waitFlag = true;
+		waitFlagCount = 0;
 		frameTable = new Stack();
 		frameTable.setWidth(Gdx.graphics.getWidth() / 2);
 		frameTable.setHeight(Gdx.graphics.getHeight());
@@ -100,7 +108,11 @@ public class MonsterBookStage extends Stage {
 		leftArrowButton.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				if (gameInfo.getSearchedPokemonInfo().getNational_id() > 1) {
-					pkmRequestController.searchPokemonById(gameInfo.getSearchedPokemonInfo().getNational_id() - 1);
+					if (waitFlag) {
+						pkmRequestController.searchPokemonById(gameInfo.getSearchedPokemonInfo().getNational_id() - 1);
+						waitFlag = false;
+					}
+
 				}
 
 			}
@@ -109,7 +121,10 @@ public class MonsterBookStage extends Stage {
 		rightArrowButton.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				if (gameInfo.getSearchedPokemonInfo().getNational_id() < 718) {
-					pkmRequestController.searchPokemonById(gameInfo.getSearchedPokemonInfo().getNational_id() + 1);
+					if (waitFlag) {
+						pkmRequestController.searchPokemonById(gameInfo.getSearchedPokemonInfo().getNational_id() + 1);
+						waitFlag = false;
+					}
 				}
 			}
 		});
