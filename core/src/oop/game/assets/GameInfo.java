@@ -18,6 +18,7 @@ public class GameInfo {
 	private Texture[] pokemonSpriteList;
 	private Pokedex pokedex;
 	private int selectedPokemonId, enemyPokemonId, searchedPokemonId;
+	private boolean beforeFullLoad;
 
 	public GameInfo() {
 		setPokemonList(new Pokemon[718]);
@@ -136,6 +137,14 @@ public class GameInfo {
 
 	public void setSearchedPokemonId(int searchedPokemonId) {
 		this.searchedPokemonId = searchedPokemonId;
+	}
+
+	public boolean isBeforeFullLoad() {
+		return beforeFullLoad;
+	}
+
+	public void setBeforeFullLoad(boolean beforeFullLoad) {
+		this.beforeFullLoad = beforeFullLoad;
 	}
 
 }

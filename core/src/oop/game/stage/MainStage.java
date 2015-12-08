@@ -42,7 +42,7 @@ public class MainStage extends Stage {
 		if (gameInfo.getSelectedPokemonSprite() != null) {
 			if (dirty > 300) {
 				// 일정 시간 지나면 dirt 생성
-				tmplabel = new Label("똥이 생성되었습니다", Assets.skin);
+				tmplabel = new Label("(똥)", Assets.skin);
 				tmplabel.scaleBy(3.0f);
 				Table labelTable = new Table();
 				labelTable.add(tmplabel);
@@ -71,6 +71,7 @@ public class MainStage extends Stage {
 	public MainStage(PokeGochi game, GameInfo gameInfo) {
 		this.gameInfo = gameInfo;
 		this.game = game;
+		game.getSaveController().save(gameInfo);
 		spritePosition = new Vector2(190, 190);
 		angle = 0;
 		dirty = 0;
