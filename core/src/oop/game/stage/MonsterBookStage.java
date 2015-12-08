@@ -53,7 +53,6 @@ public class MonsterBookStage extends Stage {
 		frameTable = new Stack();
 		frameTable.setWidth(Gdx.graphics.getWidth() / 2);
 		frameTable.setHeight(Gdx.graphics.getHeight());
-
 		spritePosition = new Vector2(35, 220);
 		makeSpriteImage(spritePosition.x, spritePosition.y);
 		makeBookTable();

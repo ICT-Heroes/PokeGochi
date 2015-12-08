@@ -4,7 +4,6 @@ import oop.game.assets.Assets;
 import oop.game.assets.GameInfo;
 import oop.game.controller.PokemonRequestController;
 import oop.game.pokegochi.PokeGochi;
-import oop.game.screen.FightScreen;
 import oop.game.screen.MonsterBookScreen;
 import oop.game.screen.TrainingScreen;
 
@@ -41,7 +40,7 @@ public class MainStage extends Stage {
 			label.setText(gameInfo.getSelectedPokemonInfo().getName());
 		}
 		if (gameInfo.getSelectedPokemonSprite() != null) {
-			if(dirty > 300){
+			if (dirty > 300) {
 				// 일정 시간 지나면 dirt 생성
 				tmplabel = new Label("똥이 생성되었습니다", Assets.skin);
 				tmplabel.scaleBy(3.0f);
@@ -100,7 +99,7 @@ public class MainStage extends Stage {
 			buttonTable.add(textButton[i]).width(160).height(100).padRight(10);
 		}
 		textButton[0].addListener(new ClickListener() {
-			public void clicked(InputEvent event, float x, float y){
+			public void clicked(InputEvent event, float x, float y) {
 				feedPokemon();
 			}
 		});
@@ -114,10 +113,9 @@ public class MainStage extends Stage {
 				game.setScreen(new MonsterBookScreen(game));
 			}
 		});
-		textButton[3].addListener(new ClickListener(){
-			public void clicked(InputEvent event, float x, float y){
-				game.setScreen(new FightScreen(game));
-				if(dirty > 300)
+		textButton[3].addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				if (dirty > 300)
 					cleanPokemon();
 			}
 		});
@@ -128,12 +126,12 @@ public class MainStage extends Stage {
 		fieldTable.add(label);
 		fieldTable.center().bottom().padBottom(150);
 	}
-	
+
 	private void feedPokemon() {
-		
+
 	}
-	
+
 	private void cleanPokemon() {
-		
+
 	}
 }
