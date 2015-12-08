@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -29,12 +30,13 @@ public class TrainingStage extends Stage {
 	private Stack trainFrameTable, bookFrameTable;
 	private Table bookTable, topTable, buttonTable;
 	private Texture texture;
+	private Label winOrLoseLabel;
 	private TextButton nameButton, enemyButton, winRateButton, typeButton, heightButton, weightButton;
 	private Vector2 spritePosition;
 	private TextureRegion character, fightPokemon;
 	private TextButton textButton[];
 	private int count, winrate, looserate, mAttack, mDefense, eAttack, eDefense, randomrate;
-	private boolean fight, win;
+	private boolean fight, win, endGame;
 	private float angle;
 	private final String[] textButtonName = {"싸워보자", "도망가자"};
 	private PokemonRequestController pkmRequestController;
@@ -49,6 +51,32 @@ public class TrainingStage extends Stage {
 			}
 			showBookTable();
 		}
+
+		if (gameInfo.getFightPokemonSprite() != null) {
+			texture = gameInfo.getFightPokemonSprite();
+			SpriteBatch batch = new SpriteBatch();
+			batch.begin();
+			batch.draw(texture, 400, 200, 300, 300);
+			batch.end();
+		}
+		if (endGame) {
+			if (win) {
+				winOrLoseLabel = new Label("You win!", Assets.skin);
+				winOrLoseLabel.setScale(0.7f);
+				Stack labelStack = new Stack();
+				labelStack.setPosition(40, 100);
+				labelStack.add(winOrLoseLabel);
+				this.addActor(labelStack);
+			} else {
+				winOrLoseLabel = new Label("You Lose!", Assets.skin);
+				winOrLoseLabel.setScale(0.7f);
+				Stack labelStack = new Stack();
+				labelStack.setPosition(40, 100);
+				labelStack.add(winOrLoseLabel);
+				this.addActor(labelStack);
+			}
+		}
+
 	}
 
 	private void moveImage() {
@@ -134,9 +162,11 @@ public class TrainingStage extends Stage {
 			if (!win) { // loose
 				batch.draw(fightPokemon, 150 - x, y - 100, 200, 200);
 				batch.draw(character, x, y - 100, 200, 200, 200, 200, 1, 1, count - 900);
+				endGame = true;
 			} else { // win
 				batch.draw(fightPokemon, 150 - x, y - 110, 200, 200, 200, 200, 1, 1, count - 900);
 				batch.draw(character, x, y - 100, 200, 200);
+				endGame = true;
 			}
 		}
 		batch.end();
