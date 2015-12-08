@@ -34,7 +34,7 @@ public class TrainingStage extends Stage {
 	private ImageButton leftArrowButton, rightArrowButton;
 	private TextButton nameButton, enemyButton, winRateButton, typeButton, heightButton, weightButton;
 	private Vector2 spritePosition;
-	private Texture character, fightPokemon;
+	private TextureRegion character, fightPokemon;
 	private TextButton textButton[];
 	private Label winrateLabel;
 	private int count, winrate;
@@ -124,8 +124,8 @@ public class TrainingStage extends Stage {
 	}
 
 	private void makeFightImage(float x, float y) {
-		TextureRegion character = new TextureRegion(gameInfo.getSelectedPokemonSprite());
-		TextureRegion fightPokemon = new TextureRegion(gameInfo.getFightPokemonSprite());
+		character = new TextureRegion(gameInfo.getSelectedPokemonSprite());
+		fightPokemon = new TextureRegion(gameInfo.getFightPokemonSprite());
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
 		if (count < 1500) {
@@ -174,6 +174,7 @@ public class TrainingStage extends Stage {
 
 	private void makeSpriteImage(float x, float y) {
 		texture = gameInfo.getSelectedPokemonSprite();
+
 		SpriteBatch batch = new SpriteBatch();
 		batch.begin();
 		batch.draw(texture, x, y, 400, 200);

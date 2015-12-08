@@ -171,10 +171,8 @@ public class PokemonRequestController implements HttpResponseListener {
 	private void makeEnemyPokemonSprite(byte[] rawImageBytes) {
 		Gdx.app.log("PokemonRequestController", "SpriteNumber : " + spriteNumber);
 		Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
-		if (gameInfo.getPokemonSpriteList()[spriteNumber] == null) {
-			gameInfo.getPokemonSpriteList()[spriteNumber] = new Texture(pixmap);
-			gameInfo.setFightPokemonSprite(new Texture(pixmap));
-		}
+		gameInfo.getPokemonSpriteList()[spriteNumber] = new Texture(pixmap);
+		gameInfo.setFightPokemonSprite(new Texture(pixmap));
 	}
 
 	private void makePokemonSprite(byte[] rawImageBytes) {
