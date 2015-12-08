@@ -50,29 +50,33 @@ public class MainStage extends Stage {
 				poopTable.add(poopImage);
 				poopTable.center().bottom().padLeft(400).padBottom(250);
 				frameTable.add(poopTable);
-				dirty = 0;
 			}
-			dirty++;
+			else
+				dirty++;
+			
 			if(feed) {
 				food++;
 				dirty--;
-			}
-			if(food > 100){
-				meat3.clear();
 				
-				if(food>150){
-					meat2.clear();
+				if(food > 100) {
+					meat3.clear();
 					
-					if(food>200){
-						meat1.clear();
+					if(food>150) {
+						meat2.clear();
+						
+						if(food>200) {
+							meat1.clear();
+						}
 					}
 				}
+				
+				if(food > 250) {
+					foodTable.clear();
+					feed = false;
+					food = 0;
+				}
 			}
-			if(food > 300) {
-				foodTable.clear();
-				feed = false;
-				food = 0;
-			}
+			
 			moveImage();
 			drawSprite(spritePosition.x, spritePosition.y);
 		}
@@ -182,6 +186,7 @@ public class MainStage extends Stage {
 	}
 
 	private void cleanPokemon() {
+		dirty = 0;
 		poopTable.clear();
 	}
 }
