@@ -190,7 +190,7 @@ public class TrainingStage extends Stage {
 			heightButton.getLabel().setFontScale(0.7f);
 			winRateButton.getLabel().setFontScale(0.7f);
 
-			String name = "No." + pokemon.getNational_id() + " " + pokemon.getName();
+			String name = pokemon.getNational_id() + " " + pokemon.getName();
 			nameButton.setText(name);
 			String type = getType(pokemon);
 			typeButton.setText(type);

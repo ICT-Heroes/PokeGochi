@@ -110,6 +110,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
 		compile "org.apache.httpcomponents:httpclient:4.5.1"
 		compile "org.apache.httpcomponents:fluent-hc:4.5.1"
+		compile "com.esotericsoftware:kryo:3.0.0"
 		testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
 		testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"    
 		testCompile 'junit:junit:4.+'

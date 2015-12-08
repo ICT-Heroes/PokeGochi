@@ -3,6 +3,7 @@ package oop.game.stage;
 import oop.game.assets.Assets;
 import oop.game.assets.GameInfo;
 import oop.game.pokegochi.PokeGochi;
+import oop.game.screen.MainScreen;
 import oop.game.screen.SelectScreen;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -55,6 +56,17 @@ public class MenuStage extends Stage {
 			public void clicked(InputEvent event, float x, float y) {
 				if (gameInfo.getPokedex() != null) {
 					game.setScreen(new SelectScreen(game));
+				}
+			}
+		});
+
+		textButton[1].addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				if (gameInfo.getPokedex() != null) {
+					if (game.getSaveController().isLoadable()) {
+						game.getSaveController().load(game);
+						game.setScreen(new MainScreen(game));
+					}
 				}
 			}
 		});
