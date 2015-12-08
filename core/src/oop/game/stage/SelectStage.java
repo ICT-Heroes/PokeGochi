@@ -28,6 +28,7 @@ public class SelectStage extends Stage {
 	private ScrollPane buttonScroll;
 	private PokemonRequestController pkmRequestController;
 	private PokeGochi game;
+	private int randomId;
 
 	public SelectStage(PokeGochi game, GameInfo gameInfo) {
 		this.game = game;
@@ -87,6 +88,14 @@ public class SelectStage extends Stage {
 
 	public void makeStartButtonTable() {
 		randomSelectButton = new TextButton("랜덤선택", Assets.skin, "red");
+		randomSelectButton.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				randomId = 5;
+				pkmRequestController.requestSpriteImageById(randomId);
+				gameInfo.setSelectedPokemonId(randomId);
+				game.setScreen(new MainScreen(game));
+			}
+		});
 		startButton = new TextButton("시작하기", Assets.skin, "red");
 		startButton.addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {

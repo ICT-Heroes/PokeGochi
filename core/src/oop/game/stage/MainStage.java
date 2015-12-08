@@ -5,6 +5,7 @@ import oop.game.assets.GameInfo;
 import oop.game.controller.PokemonRequestController;
 import oop.game.pokegochi.PokeGochi;
 import oop.game.screen.MonsterBookScreen;
+import oop.game.screen.TrainingScreen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -22,15 +23,16 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class MainStage extends Stage {
 	private final String[] textButtonName = {"먹이주기", "수련하기", "도감보기", "똥치우기"};
 	private Stack frameTable;
-	private Table fieldTable, buttonTable;
+	private Table fieldTable, buttonTable, labelTable;
 	private TextButton[] textButton;
 	private PokemonRequestController pokemonRequestController;
 	private Texture texture;
-	private Label label;
+	private Label label, tmplabel;
 	private GameInfo gameInfo;
 	private PokeGochi game;
 	private Vector2 spritePosition;
 	private float angle;
+	private int dirty;
 
 	@Override
 	public void act() {
@@ -38,11 +40,21 @@ public class MainStage extends Stage {
 			label.setText(gameInfo.getSelectedPokemonInfo().getName());
 		}
 		if (gameInfo.getSelectedPokemonSprite() != null) {
+			if (dirty > 300) {
+				// 일정 시간 지나면 dirt 생성
+				tmplabel = new Label("똥이 생성되었습니다", Assets.skin);
+				tmplabel.scaleBy(3.0f);
+				Table labelTable = new Table();
+				labelTable.add(tmplabel);
+				labelTable.center().bottom().padLeft(580).padBottom(400);
+				frameTable.add(labelTable);
+			}
+			dirty++;
 			moveImage();
 			drawSprite(spritePosition.x, spritePosition.y);
 		}
 	}
-	
+
 	private void moveImage() {
 		angle += 0.05f;
 		spritePosition.x = (float) (190 + 30 * Math.sin(angle));
@@ -61,6 +73,7 @@ public class MainStage extends Stage {
 		this.game = game;
 		spritePosition = new Vector2(190, 190);
 		angle = 0;
+		dirty = 0;
 		pokemonRequestController = new PokemonRequestController(gameInfo);
 		pokemonRequestController.requestPokemonById(gameInfo.getSelectedPokemonId());
 		frameTable = new Stack();
@@ -85,10 +98,25 @@ public class MainStage extends Stage {
 			textButton[i].setColor(Color.CORAL);
 			buttonTable.add(textButton[i]).width(160).height(100).padRight(10);
 		}
-
+		textButton[0].addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				feedPokemon();
+			}
+		});
+		textButton[1].addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				game.setScreen(new TrainingScreen(game));
+			}
+		});
 		textButton[2].addListener(new ClickListener() {
 			public void clicked(InputEvent event, float x, float y) {
 				game.setScreen(new MonsterBookScreen(game));
+			}
+		});
+		textButton[3].addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				if (dirty > 300)
+					cleanPokemon();
 			}
 		});
 		buttonTable.center().bottom().padBottom(10);
@@ -97,5 +125,13 @@ public class MainStage extends Stage {
 		label = new Label("", Assets.skin);
 		fieldTable.add(label);
 		fieldTable.center().bottom().padBottom(150);
+	}
+
+	private void feedPokemon() {
+
+	}
+
+	private void cleanPokemon() {
+
 	}
 }
